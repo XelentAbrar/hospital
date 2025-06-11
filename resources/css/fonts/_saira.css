@@ -1,0 +1,33 @@
+@font-face {
+    font-family: Saira;
+    src: url('/public/assets/fonts/Saira/sairacondensed-regular-webfont.woff2') format('woff2'),
+         url('/public/assets/fonts/Saira/sairacondensed-regular-webfont.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: Saira;
+    src: url('/public/assets/fonts/Saira/sairacondensed-medium-webfont.woff2') format('woff2'),
+         url('/public/assets/fonts/Saira/sairacondensed-medium-webfont.woff') format('woff');
+    font-weight: 500;
+  }
+
+  @font-face {
+    font-family: Saira;
+    src: url('/public/assets/fonts/Saira/sairacondensed-semibold-webfont.woff2') format('woff2'),
+         url('/public/assets/fonts/Saira/sairacondensed-semibold-webfont.woff') format('woff');
+    font-weight: 600;
+  }
+
+  @font-face {
+    font-family: Saira;
+    src: url('/public/assets/fonts/Saira/sairacondensed-extrabold-webfont.woff2') format('woff2'),
+         url('/public/assets/fonts/Saira/sairacondensed-extrabold-webfont.woff') format('woff');
+    font-weight: 800;
+  }
+
+  @font-face {
+    font-family: Saira;
+    src: url('/public/assets/fonts/Saira/sairacondensed-black-webfont.woff2') format('woff2'),
+         url('/public/assets/fonts/Saira/sairacondensed-black-webfont.woff') format('woff');
+    font-weight: 900;
+  }

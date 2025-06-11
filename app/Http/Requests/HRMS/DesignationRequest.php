@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Requests\HRMS;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class DesignationRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'is_doctor' => 'required|boolean',
+        ];
+
+        return $rules;
+    }
+}

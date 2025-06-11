@@ -1,0 +1,11 @@
+@import "./fonts/_inter.css";
+@import "./fonts/_saira.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1,h2,h3,h4,h5,h6 {
+        font-family: 'Saira', sans-serif;
+    }
+}
