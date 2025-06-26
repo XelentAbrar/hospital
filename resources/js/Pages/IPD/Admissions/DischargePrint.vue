@@ -140,7 +140,7 @@
         <div class="bill-summary flex justify-between items-start gap-4">
             <div>
                 <p ><strong class="underline">Description</strong><br>
-                    {{ (careoffs.find(c => c.id === admission.careoff_id) || { name: '' })?.name}} </p>
+                    <span v-if="hasDonationModule">{{ (careoffs.find(c => c.id === admission.careoff_id) || { name: '' })?.name}} </span></p>
                     <div class="mt-8">
                             <p  class="text-xs  "><strong class="underline">User</strong><br>
                             {{admission?.updator?.name}} </p>

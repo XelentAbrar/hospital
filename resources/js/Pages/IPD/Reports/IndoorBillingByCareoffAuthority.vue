@@ -199,6 +199,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         Care Off
                       </th>
@@ -223,6 +224,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace_nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         CareOff Fee
                       </th>
@@ -235,6 +237,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         Zakat
                       </th>
@@ -288,6 +291,7 @@
                         </td>
                         <td
                             class="whitespace_nowrap relative text-gray-900"
+                            v-if="hasDonationModule"
                         >
                             {{ report?.careoff?.name }}
                         </td>
@@ -308,6 +312,7 @@
                         </td>
                         <td
                             class="whitespace-nowrap relative text-gray-900"
+                            v-if="hasDonationModule"
                         >
                             {{ formatNumber(report?.donor_fee) }}
                         </td>
@@ -318,6 +323,7 @@
                         </td>
                         <td
                             class="whitespace-nowrap relative text-gray-900"
+                            v-if="hasDonationModule"
                         >
                             {{ formatNumber(report?.zf_fee) }}
                         </td>
@@ -335,7 +341,12 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative border-t border-gray-300"
-                        colspan="7"
+                        colspan="6"
+                      >
+                      </td>
+                      <td
+                        class="whitespace-nowrap relative border-t border-gray-300"
+                        v-if="hasDonationModule"
                       >
                       </td>
                       <td
@@ -350,6 +361,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative border-t border-gray-300"
+                        v-if="hasDonationModule"
                       >
                       {{ formatNumber(sum(reports, 'donor_fee')) }}
                       </td>
@@ -360,6 +372,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative border-t border-gray-300"
+                        v-if="hasDonationModule"
                       >
                       {{ formatNumber(sum(reports, 'zf_fee')) }}
                       </td>
@@ -387,6 +400,7 @@ import "flatpickr/dist/flatpickr.min.css";
 const from_date = ref(null);
 const to_date = ref(null);
 const props = defineProps({
+  hasDonationModule: Boolean,
   reports: Object,
   from_date: String,
   to_date: String,

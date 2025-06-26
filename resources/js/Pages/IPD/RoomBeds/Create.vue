@@ -8,11 +8,7 @@
             {{ form?.id ? "Update" : "Create" }} Room Bed
           </h1>
           <form
-            @submit.prevent="
-              form?.id
-                ? form.put(route('room-beds.update', { id: form.id }))
-                : form.post(route('room-beds.store'), form)
-            "
+            @submit.prevent="handleSubmit"
             >
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 py-6">
                 <div>
@@ -72,6 +68,7 @@
                 <button
                   type="submit"
                   class="rounded bg-primary px-5 py-2 w-24 text-sm md:text-base font-medium text-white shadow-sm border border-primary hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  :disabled="submitting"
                 >
                   Save
                 </button>
@@ -100,6 +97,26 @@ const form = useForm({
   bed_number: props?.room_bed?.bed_number || null,
   room_id: props?.room_bed?.room_id || null,
 });
+
+
+const submitting = ref(false);
+
+const handleSubmit = () => {
+  if (submitting.value) return;
+
+  submitting.value = true;
+
+  const method = form?.id ? 'put' : 'post';
+  const url = form?.id
+    ? route('room-beds.update', { id: form.id })
+    : route('room-beds.store');
+
+  form[method](url, {
+    onFinish: () => {
+      submitting.value = false;
+    },
+  });
+};
 
 const selectedRoom = ref(null);
 if (props?.room_bed) {

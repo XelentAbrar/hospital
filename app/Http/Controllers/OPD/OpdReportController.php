@@ -170,7 +170,11 @@ class OpdReportController extends Controller
         if ($doctor_id) {
             $appointment = $appointment->where('consulting_doctor_id', $doctor_id);
         }
-        $appointment = $appointment->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointment = $appointment->with(['careoff', 'zf']);
+        }
+        $appointment = $appointment->with(['appointmentDetails.service', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
+        
         $appointment = $appointment->get();
         return Inertia::render('OPD/Reports/DocDetail', [
             'doctors' => $doctors,
@@ -239,7 +243,11 @@ class OpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
         // $appointments = $appointments->with(['appointmentDetails.service.category','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service.category', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        
+        $appointments = $appointments->with(['appointmentDetails.service.category', 'doctor'])
             ->whereHas('doctor', function ($query) {
                 $query->where('doctor_type', 'General');
             })
@@ -543,7 +551,11 @@ class OpdReportController extends Controller
                 'patients' => '1',
             ];
         }
-        $specialistAppointments = Appointment::with(['appointmentDetails.service.category', 'careoff', 'zf', 'doctor'])
+        $specialistAppointments = new Appointment();
+        if(file_exists(base_path('config/donation.php'))) {
+            $specialistAppointments = $specialistAppointments->with(['zf']);
+        }
+        $specialistAppointments = $specialistAppointments->with(['appointmentDetails.service.category', 'doctor'])
             ->whereHas('doctor', function ($query) {
                 $query->where('doctor_type', 'Specialist');
             })
@@ -1806,7 +1818,10 @@ class OpdReportController extends Controller
                 $from_time_only = date('H:i', strtotime($from_date));
                 $to_date_only = date('Y-m-d', strtotime($to_date));
                 $to_time_only = date('H:i', strtotime($to_date));
-            $appointments = $appointments->with(['appointmentDetails.service.category', 'careoff', 'zf', 'doctor'])
+                if(file_exists(base_path('config/donation.php'))) {
+                    $appointments = $appointments->with(['careoff', 'zf']);
+                }
+            $appointments = $appointments->with(['appointmentDetails.service.category', 'doctor'])
                 ->whereHas('doctor', function ($query) {
                     $query->where('doctor_type', 'General');
                 })
@@ -2158,7 +2173,11 @@ class OpdReportController extends Controller
                 ];
             }
 
-            $specialistDoctorFees = Appointment::with(['appointmentDetails.service.category', 'careoff', 'zf', 'doctor'])
+            $specialistDoctorFees = new Appointment();
+            if(file_exists(base_path('config/donation.php'))) {
+                $specialistDoctorFees = $specialistDoctorFees->with(['careoff', 'zf']);
+            }
+            $specialistDoctorFees = $specialistDoctorFees->with(['appointmentDetails.service.category', 'doctor'])
                 ->whereHas('doctor', function ($query) {
                     $query->where('doctor_type', 'Specialist');
                 })
@@ -2322,8 +2341,10 @@ class OpdReportController extends Controller
 
             $fee =  $received_admissions->sum('donor_fee') + $received_admissions->sum('zf_fee') + $received_admissions->sum('discount_amount');
 
-            $careOff = $received_admissions->whereNotNull('careoff_id')->sum('donor_fee');
-            $zf = $received_admissions->sum('zf_fee');
+            if(file_exists(base_path('config/donation.php'))) {
+                $careOff = $received_admissions->whereNotNull('careoff_id')->sum('donor_fee');
+                $zf = $received_admissions->sum('zf_fee');
+            }
             $received = $received_admissions->sum('received_amount');
 
             $refund = $received_admissions->sum('refund_amount');
@@ -2337,7 +2358,7 @@ class OpdReportController extends Controller
             $parms['service_name'] = 'Indoor Bill';
             $parms['fee'] = $fee;
             $parms['patients'] = $received_admissions->count();
-            $parms['careOff'] = $careOff;
+            $parms['careOff'] = $careOff ?? null;
             $parms['zf'] = $zf ?? 0;
             $parms['received'] = $received ?? 0;
             $parms['refund'] = $refund;
@@ -2430,7 +2451,10 @@ class OpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
         // $appointments = $appointments->with(['appointmentDetails.service','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($from_date_only, $from_time_only, $to_date_only, $to_time_only, $search) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2504,7 +2528,11 @@ class OpdReportController extends Controller
         $to_time_only = date('H:i', strtotime($to_date));
 
         // Fetch appointments with filters
-        $appointments = Appointment::with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        $appointments = new Appointment();
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($from_date_only, $from_time_only, $to_date_only, $to_time_only, $search) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2573,7 +2601,10 @@ class OpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
 
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($from_date_only, $from_time_only, $to_date_only, $to_time_only, $search) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2649,7 +2680,10 @@ class OpdReportController extends Controller
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
         // $appointments = $appointments->with(['appointmentDetails.service','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($from_date_only, $from_time_only, $to_date_only, $search, $to_time_only) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2722,7 +2756,10 @@ class OpdReportController extends Controller
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
         // $appointments = $appointments->with(['appointmentDetails.service','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($search, $from_date_only, $from_time_only, $to_date_only, $to_time_only) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2795,7 +2832,10 @@ class OpdReportController extends Controller
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
         // $appointments = $appointments->with(['appointmentDetails.service','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff.funds', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff.funds', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($search, $from_date_only, $from_time_only, $to_date_only, $to_time_only) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2808,9 +2848,12 @@ class OpdReportController extends Controller
                                 $q->where('patient_name', 'like', '%' . $search . '%');
                             })->orWhereHas('doctor', function ($q) use ($search) {
                                 $q->where('name', 'like', '%' . $search . '%');
-                            })->orWhereHas('careoff', function ($q) use ($search) {
-                                $q->where('name', 'like', '%' . $search . '%');
                             });
+                            if(file_exists(base_path('config/donation.php'))) {
+                                $q->orWhereHas('careoff', function ($q) use ($search) {
+                                    $q->where('name', 'like', '%' . $search . '%');
+                                });
+                            }
                     });
                 }
             });
@@ -2868,7 +2911,10 @@ class OpdReportController extends Controller
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
         // $appointments = $appointments->with(['appointmentDetails.service','careoff','zf','doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])
             ->where(function ($query) use ($from_date_only, $from_time_only, $to_date_only, $to_time_only) {
                 $query->whereBetween('appointment_date', [$from_date_only, $to_date_only])
                     ->whereBetween('appointment_time', [$from_time_only, $to_time_only]);
@@ -2907,7 +2953,11 @@ class OpdReportController extends Controller
         $doctors = Employee::select('id', 'name')->whereHas('designation', function ($q) {
             $q->where('is_doctor', 1);
         })->with('appointments', function ($q) use ($from_date, $to_date) {
-            $q = $q->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
+            if(file_exists(base_path('config/donation.php'))) {
+                $q = $q->with(['careoff', 'zf']);
+            }
+            $q = $q->with(['appointmentDetails.service', 'doctor'])
+            ->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
         })->orderBy('name')->get();
 
         return Inertia::render('OPD/Reports/ConsultantTax', [
@@ -2950,7 +3000,10 @@ class OpdReportController extends Controller
         if ($doctor_id) {
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
         $appointments = $appointments->get();
 
         return Inertia::render('OPD/Reports/DetailByDoctor', [
@@ -2993,7 +3046,10 @@ class OpdReportController extends Controller
                 $q->where('service_id', $service_id);
             });
         }
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
         $appointments = $appointments->get();
 
         return Inertia::render('OPD/Reports/DetailByAmount', [
@@ -3049,7 +3105,10 @@ class OpdReportController extends Controller
         if ($doctor_id) {
             $appointments = $appointments->where('consulting_doctor_id', $doctor_id);
         }
-        $appointments = $appointments->with(['appointmentDetails.service', 'careoff', 'zf', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +0 day'))]);
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointments = $appointments->with(['careoff', 'zf']);
+        }
+        $appointments = $appointments->with(['appointmentDetails.service', 'doctor'])->whereBetween('appointment_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +0 day'))]);
         $appointments = $appointments->get();
 
         $totalFees = [];
@@ -3101,32 +3160,46 @@ class OpdReportController extends Controller
             $toDate = $toDate->format('Y-m-d');
         }
 
-        $appointmentsQuery = Appointment::with(['careoff', 'patient', 'appointmentDetails', 'doctor'])
+        $appointmentsQuery = new Appointment();
+        if(file_exists(base_path('config/donation.php'))) {
+            $appointmentsQuery = $appointmentsQuery->with(['careoff']);
+        }
+        $appointmentsQuery = $appointmentsQuery->with(['patient', 'appointmentDetails', 'doctor'])
             ->whereDate('appointment_date', '>=', $fromDate)
             ->whereDate('appointment_date', '<=', $toDate)
             ->orderBy('appointment_date', 'asc')
             ->orderBy('appointment_time', 'asc');
 
-        $admissionsQuery = Admission::with(['careoff', 'patient', 'details', 'details.service', 'details.doctor'])
+        $admissionsQuery = new Admission();
+        if(file_exists(base_path('config/donation.php'))) {
+            $admissionsQuery = $admissionsQuery->with(['careoff']);
+        }
+        $admissionsQuery = $admissionsQuery->with(['patient', 'details', 'details.service', 'details.doctor'])
             ->whereDate('discharge_date', '>=', $fromDate)
             ->whereDate('discharge_date', '<=', $toDate)
             ->orderBy('discharge_date', 'asc')
             ->orderBy('discharge_time', 'asc');
 
-        $patientTestsQuery = PatientTest::with([
-                'careoff',
-                'patient',
-                'patientTestDetails.package',
-                'patientTestDetails.testGeneralDetails.subPackage',
-                'patientTestDetails.testGeneralDetails.labTest',
-                'patientTestDetails.testGeneralDetails.testCategory',
-                'testWidalDetails.widalTest',
-                'testCrossMatchDetails',
-            ])
-            ->whereDate('test_date', '>=', $fromDate)
-            ->whereDate('test_date', '<=', $toDate)
-            ->orderBy('test_date', 'asc')
-            ->orderBy('test_time', 'asc');
+        if(file_exists(base_path('config/lab.php'))) {
+            $patientTestsQuery = new PatientTest();
+            if(file_exists(base_path('config/donation.php'))) {
+                $patientTestsQuery = $patientTestsQuery->with(['careoff']);
+            }
+
+            $patientTestsQuery = $patientTestsQuery->with([
+                    'patient',
+                    'patientTestDetails.package',
+                    'patientTestDetails.testGeneralDetails.subPackage',
+                    'patientTestDetails.testGeneralDetails.labTest',
+                    'patientTestDetails.testGeneralDetails.testCategory',
+                    'testWidalDetails.widalTest',
+                    'testCrossMatchDetails',
+                ])
+                ->whereDate('test_date', '>=', $fromDate)
+                ->whereDate('test_date', '<=', $toDate)
+                ->orderBy('test_date', 'asc')
+                ->orderBy('test_time', 'asc');
+        }
 
         if ($searchTerm) {
             $patient = Patient::where('name', 'LIKE', '%' . $searchTerm . '%')
@@ -3146,17 +3219,21 @@ class OpdReportController extends Controller
                           ->orWhere('phone', 'LIKE', '%' . $patient->phone . '%');
                 });
 
-                $patientTestsQuery->where(function ($query) use ($patient) {
-                    $query->where('patient_cnic', 'LIKE', '%' . $patient->cnic . '%')
-                          ->orWhere('patient_name', 'LIKE', '%' . $patient->name . '%')
-                          ->orWhere('patient_phone', 'LIKE', '%' . $patient->phone . '%');
-                });
+                if(file_exists(base_path('config/lab.php'))) {
+                    $patientTestsQuery->where(function ($query) use ($patient) {
+                        $query->where('patient_cnic', 'LIKE', '%' . $patient->cnic . '%')
+                            ->orWhere('patient_name', 'LIKE', '%' . $patient->name . '%')
+                            ->orWhere('patient_phone', 'LIKE', '%' . $patient->phone . '%');
+                    });
+                }
             }
         }
 
         $appointments = $appointmentsQuery->get();
         $admissions = $admissionsQuery->get();
-        $patientTests = $patientTestsQuery->get();
+        if(file_exists(base_path('config/lab.php'))) {
+            $patientTests = $patientTestsQuery->get();
+        }
 
         $combinedResults = collect();
 
@@ -3216,24 +3293,26 @@ class OpdReportController extends Controller
             }
         }
 
-        foreach ($patientTests as $patientTest) {
-            $patient = Patient::where(function ($query) use ($patientTest) {
-                $query->where('phone', $patientTest->patient_phone);
-            })->first();
-            $mrNumber = $patient ? $patient->mr_number : '';
+        if(file_exists(base_path('config/lab.php'))) {
+            foreach ($patientTests as $patientTest) {
+                $patient = Patient::where(function ($query) use ($patientTest) {
+                    $query->where('phone', $patientTest->patient_phone);
+                })->first();
+                $mrNumber = $patient ? $patient->mr_number : '';
 
-            if ($patient) {
-                $combinedResults->push([
-                    'type' => 'Patient Test',
-                    'id' => $patientTest->id,
-                    'patient_name' => $patientTest->patient_name,
-                    'patient_phone' => $patientTest->patient_phone,
-                    'patient_cnic' => $patientTest->patient_cnic,
-                    'date' => $patientTest->test_date,
-                    'mr_number' => $mrNumber ?? '',
-                    'amount' => $patientTest->total_amount ?? 0,
-                    'patient_test_details' => $patientTest->patientTestDetails,
-                ]);
+                if ($patient) {
+                    $combinedResults->push([
+                        'type' => 'Patient Test',
+                        'id' => $patientTest->id,
+                        'patient_name' => $patientTest->patient_name,
+                        'patient_phone' => $patientTest->patient_phone,
+                        'patient_cnic' => $patientTest->patient_cnic,
+                        'date' => $patientTest->test_date,
+                        'mr_number' => $mrNumber ?? '',
+                        'amount' => $patientTest->total_amount ?? 0,
+                        'patient_test_details' => $patientTest->patientTestDetails,
+                    ]);
+                }
             }
         }
 

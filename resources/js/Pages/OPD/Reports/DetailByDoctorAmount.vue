@@ -237,6 +237,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         Care Off
                       </th>
@@ -268,7 +269,7 @@
           <td class="whitespace-nowrap relative border-b border-gray-300 text-gray-900">
             0
           </td>
-          <td class="whitespace-nowrap relative border-b border-gray-300 text-gray-900">
+          <td class="whitespace-nowrap relative border-b border-gray-300 text-gray-900" v-if="hasDonationModule">
             {{ report?.careoff_id ? report?.careoff?.name : '' }}
           </td>
         </tr>
@@ -289,7 +290,8 @@
       <td class="whitespace-nowrap relative font-bold text-xl border-b border-gray-300 text-gray-900">
         {{ formatNumber(total_fees[doctorId] || 0) }}
       </td>
-      <td colspan="2" class="whitespace-nowrap relative border-b border-gray-300 text-gray-900"></td>
+      <td class="whitespace-nowrap relative border-b border-gray-300 text-gray-900"></td>
+      <td class="whitespace-nowrap relative border-b border-gray-300 text-gray-900" v-if="hasDonationModule"></td>
     </tr>
   </template>
 </tbody>
@@ -340,6 +342,7 @@ import "flatpickr/dist/flatpickr.min.css";
 const from_date = ref(null);
 const to_date = ref(null);
 const props = defineProps({
+  hasDonationModule: Boolean,
   services: Array,
   doctors: Array,
   reports: Object,

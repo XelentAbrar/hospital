@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('admission_date')->nullable();
             $table->date('discharge_date')->nullable();
             $table->text('reason_for_admission', 500)->nullable();
-            $table->foreignId("room_bed_id")->nullable()->index()->references('id')->on('room_beds')->onDelete('set null');
+            $table->foreignId("room_bed_id")->nullable()->index()->references('id')->on('rooms')->onDelete('set null');
             $table->timestamps();
         });
     }

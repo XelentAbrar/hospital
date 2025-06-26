@@ -18,7 +18,7 @@ class PatientRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'cnic' => 'required|string|max:255|unique:patients',
+            'cnic' => 'required|string|max:255|unique:patients,cnic,' . $this->id,
             'dob' => 'nullable|date|before_or_equal:today',
             // 'pat ient_age' => 'required|string|max:255',
             'gender' => 'required|in:Male,Female,Children',

@@ -214,12 +214,11 @@
                         :message="employee?.errors?.about_employee"
                       />
                     </div>
-                  <div>
+                  <!-- <div>
                     <label
                       for="image"
                       class="block text-sm md:text-base font-medium text-gray-900"
                       >Picture
-                      <!-- <span class="text-red-500">*</span> -->
                     </label>
                     <file-pond
                     class="bg-white mt-1"
@@ -249,7 +248,7 @@
                       v-if="employee?.errors?.image"
                       :message="employee?.errors?.image"
                     />
-                  </div>
+                  </div> -->
                     <div class="col-span-2">
                     <label
                       for="street_address"
@@ -1862,7 +1861,7 @@ const onCitySelect = (selectedCity) => {
 
 
 const selectedCoa = ref(null);
-if (props?.employee) {
+if (props?.employee && props?.hasAccountsModule) {
   const coas = props.coa.find(
     (c) => c.id === props.employee.coa_id
   );

@@ -123,7 +123,7 @@
                                 <InertiaLink
                                     :key="`page-${page}`"
                                     v-if="page === departments.current_page"
-                                    :href="getRouteLink(page)"
+                                    :href="getRouteLink(type)"
                                     class="pagination-box current"
                                 >
                                     <span>{{ page }}</span>
@@ -131,7 +131,7 @@
                                 <InertiaLink
                                 :key="`page-${page}`"
                                   v-else
-                                   :href="getRouteLink(page)"
+                                   :href="getRouteLink(type)"
                                     class="pagination-box"
                                 >
                                     <span>{{ page }}</span>
@@ -181,7 +181,7 @@ Swal.fire({
     });
 };
 const getRouteLink = (page) => {
-    const routeName = page === 'departments' ? 'departments.index' : 'inventory-departments.index';
+    const routeName = page === 'payroll' ? 'departments.index' : 'inventory-departments.index';
     return route(routeName, { page: page });
 };
 </script>

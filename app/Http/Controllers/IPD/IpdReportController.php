@@ -43,7 +43,10 @@ class IpdReportController extends Controller
     $to_date_only = date('Y-m-d', strtotime($to_date));
     $to_time_only = date('H:i', strtotime($to_date));
 
-    $reports = $reports->with('department','careoff')
+    if(file_exists(base_path('config/donation.php'))) {
+        $reports = $reports->with('careoff');
+    }
+    $reports = $reports->with('department')
     ->where('cancel', '!=', '1')
     ->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only) {
         $q->whereBetween('admission_date', [$from_date_only, $to_date_only])
@@ -345,7 +348,10 @@ class IpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
         // $reports = $reports->with(['department','careoff'])->whereBetween('admission_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $reports = $reports->with(['department', 'careoff','details.doctor'])->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only) {
+        if(file_exists(base_path('config/donation.php'))) {
+            $reports = $reports->with(['careoff']);
+        }
+        $reports = $reports->with(['department', 'details.doctor'])->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only) {
             $q->whereBetween('discharge_date', [$from_date_only, $to_date_only])
               ->whereBetween('discharge_time', [$from_time_only, $to_time_only]);
         });
@@ -388,9 +394,11 @@ class IpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
         // $reports = $reports->whereNotNull('careoff_id')->with(['department','careoff'])->whereBetween('admission_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $reports = $reports->whereNotNull('careoff_id')
-        ->with(['department', 'careoff'])
-        ->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only, $from_date, $to_date) {
+        if(file_exists(base_path('config/donation.php'))) {
+            $reports = $reports->whereNotNull('careoff_id');
+            $reports = $reports->with(['department', 'careoff']);
+        }
+        $reports = $reports->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only, $from_date, $to_date) {
             $q->whereBetween('discharge_date', [$from_date_only, $to_date_only])
               ->whereBetween('discharge_time', [$from_time_only, $to_time_only]);
         });
@@ -433,7 +441,10 @@ class IpdReportController extends Controller
         $to_date_only = date('Y-m-d', strtotime($to_date));
         $to_time_only = date('H:i', strtotime($to_date));
         // $reports = $reports->whereNotNull('welfare')->whereNotNull('careoff_id')->with(['department','careoff'])->whereBetween('admission_date', [$from_date, date('Y-m-d H:i', strtotime($to_date . ' +1 day'))]);
-        $reports = $reports->whereNotNull('welfare')->whereNotNull('careoff_id')->with(['department','careoff']) ->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only, $from_date, $to_date) {
+        if(file_exists(base_path('config/donation.php'))) {
+            $reports = $reports->whereNotNull('careoff_id')->with(['careoff']);
+        }
+        $reports = $reports->whereNotNull('welfare')->with(['department'])->where(function($q) use ($from_date_only, $to_date_only, $from_time_only, $to_time_only, $from_date, $to_date) {
             $q->whereBetween('admission_date', [$from_date_only, $to_date_only])
               ->whereBetween('admission_time', [$from_time_only, $to_time_only]);
         });

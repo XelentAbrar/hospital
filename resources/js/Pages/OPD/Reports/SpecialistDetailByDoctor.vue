@@ -243,6 +243,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         Care Off
                       </th>
@@ -302,6 +303,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative border-b border-gray-300 text-gray-900"
+                        v-if="hasDonationModule"
                       >
                         {{ report?.careoff_id != '' && report?.careoff_id != null ? report?.careoff?.name : '' }}
                       </td>
@@ -336,6 +338,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative"
+                        v-if="hasDonationModule"
                       >
                       </td>
                     </tr>
@@ -361,6 +364,7 @@ const from_date = ref(null);
 const to_date = ref(null);
 const projectType = import.meta.env.VITE_PROJECT_TYPE;
 const props = defineProps({
+  hasDonationModule: Boolean,
   doctors: Array,
   reports: Object,
   doctor_id: String,

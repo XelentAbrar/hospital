@@ -899,7 +899,7 @@
                       />
                     </div> -->
 
-                  <div>
+                  <div v-if="hasDonationModule">
                             <label
                                 for="careoff_id"
                                 class="block text-md font-semibold leading-6 text-gray-900"

@@ -50,7 +50,7 @@ return new class extends Migration
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null');
             $table->foreign('bed_id')->references('id')->on('room_beds')->onDelete('set null');
             $table->foreign('type_id')->references('id')->on('room_types')->onDelete('set null');
-            $table->foreign('room_bed_id')->references('id')->on('room_beds')->onDelete('set null');
+            $table->foreign('room_bed_id')->references('id')->on('rooms')->onDelete('set null');
             $table->foreignId('created_by')->nullable()->references('id')->on('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->onDelete('set null');
 

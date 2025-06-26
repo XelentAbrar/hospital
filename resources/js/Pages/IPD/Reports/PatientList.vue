@@ -190,18 +190,21 @@
                               <th
                                   scope="col"
                                   class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                                  v-if="props.hasDonationModule"
                               >
                                   CareOFF
                               </th>
                               <th
                                   scope="col"
                                   class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                                  v-if="props.hasDonationModule"
                               >
                                   CareOFF FEE
                               </th>
                               <th
                                   scope="col"
                                   class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                                  v-if="props.hasDonationModule"
                               >
                                   ZF
                               </th>
@@ -287,18 +290,21 @@
                                   </td>
                                   <td
                                        class="whitespace-nowrap text-center border-b border-gray-300 relative text-gray-900"
+                                       v-if="props.hasDonationModule"
                                   >
 
                                       {{ report?.careoff?.name }}
                                   </td>
                                     <td
                                        class="whitespace-nowrap text-center border-b border-gray-300 relative text-gray-900"
+                                       v-if="props.hasDonationModule"
                                   >
 
                                       {{ formatNumber(report?.donor_fee) }}
                                   </td>
                                   <td
                                        class="whitespace-nowrap text-center border-b border-gray-300 relative text-gray-900"
+                                       v-if="props.hasDonationModule"
                                   >
 
                                       {{ formatNumber(report?.zf_fee) }}
@@ -335,12 +341,12 @@
                               <h4 style="margin:0 10px;font-weight:bold; width: 10px;text-align: center;">:</h4>
                               <p style="margin: 0;margin-left: 2px;text-align: left;font-weight: 500;border-bottom: 1px solid #000;line-height: 14px;padding:1px 12px;">{{ formatNumber(sum(reports, 'refund_amount', 'report')) }}</p>
                           </div>
-                          <div style="display: flex;align-items: center;" class="">
+                          <div style="display: flex;align-items: center;" class="" v-if="props.hasDonationModule">
                               <h4 style="margin: 0;font-family: sans-serif; width: 130px;font-weight:600;font-size: 16px;">CareOFF</h4>
                               <h4 style="margin:0 10px;font-weight:bold; width: 10px;text-align: center;">:</h4>
                               <p style="margin: 0;margin-left: 2px;text-align: left;font-weight: 500;border-bottom: 1px solid #000;line-height: 14px;padding:1px 12px;">{{ formatNumber(sum(reports, 'donor_fee', 'report')) }}</p>
                           </div>
-                          <div style="display: flex;align-items: center;" class="">
+                          <div style="display: flex;align-items: center;" class="" v-if="props.hasDonationModule">
                               <h4 style="margin: 0;font-family: sans-serif; width: 130px;font-weight:600;font-size: 16px;">ZF</h4>
                               <h4 style="margin:0 10px;font-weight:bold; width: 10px;text-align: center;">:</h4>
                               <p style="margin: 0;margin-left: 2px;text-align: left;font-weight: 500;border-bottom: 1px solid #000;line-height: 14px;padding:1px 12px;">{{ formatNumber(sum(reports, 'zf_fee', 'report')) }}</p>
@@ -381,6 +387,7 @@ import "flatpickr/dist/flatpickr.min.css";
 const from_date = ref(null);
 const to_date = ref(null);
   const props = defineProps({
+    hasDonationModule:Boolean,
     doctors: Array,
     reports: Object,
     doctor_id: String,

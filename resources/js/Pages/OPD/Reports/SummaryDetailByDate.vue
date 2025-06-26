@@ -220,6 +220,7 @@
                       <th
                         scope="col"
                         class="bg-primary whitespace-nowrap text-center font-bold text_white border-b border-gray-300 sticky top-0 z-10"
+                        v-if="hasDonationModule"
                       >
                         Care Off
                       </th>
@@ -276,6 +277,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative border-b border-gray-300 text-gray-900"
+                        v-if="hasDonationModule"
                       >
                         {{ formatNumber(report?.careoff_id != '' && report?.careoff_id != null ? report?.donor_fee : 0) }}
                       </td>
@@ -309,6 +311,7 @@
                       </td>
                       <td
                         class="whitespace-nowrap relative"
+                        v-if="hasDonationModule"
                       >
                         {{ formatNumber(sum(reports, 'donor_fee', null, 'careoff_id')) }}
                       </td>
@@ -336,6 +339,7 @@ const from_date = ref(null);
 const to_date = ref(null);
 const projectType = import.meta.env.VITE_PROJECT_TYPE;
 const props = defineProps({
+    hasDonationModule: Boolean,
     reports: Object,
     from_date: String,
   to_date: String,

@@ -833,7 +833,7 @@
                 </div> -->
 
 
-                <div class="flex items-center space-x-2 w-full">
+                <div class="flex items-center space-x-2 w-full" v-if="hasDonationModule">
                     <label
                         for="careoff_id"
                         class="block text-sm md:text-base font-medium text-gray-900 whitespace-nowrap min-w-44"
@@ -965,6 +965,7 @@ const getCurrentDateInPakistanTimezone = () => {
   return currentDate;
 };
 const props = defineProps({
+  hasDonationModule:Boolean,
     file_no:Object,
     services:Object,
     departments:Object,

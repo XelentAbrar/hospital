@@ -39,9 +39,10 @@
                         type="text"
                         class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
                         step="0.01"
-                        :value="mr_number"
-                        @input="generateMRNumber"
-                      />
+                        :value="form.mr_number"
+                        disabled
+                        />
+                        <!-- @input="generateMRNumber" -->
                     <InputError
                       v-if="form.errors?.mr_number"
                       :message="form.errors?.mr_number"
@@ -404,7 +405,7 @@ const form = useForm({
   id: props?.patient?.id || null,
   name: props?.patient?.name || null,
   cnic: props?.patient?.cnic || null,
-  mr_number: props?.patient?.mr_number || null,
+  mr_number: props?.patient?.mr_number || props?.mr_number,
   dob: props?.patient?.dob || null,
   gender: props?.patient?.gender || null,
   relation_name: props?.patient?.relation_name || null,
@@ -440,7 +441,7 @@ if (props?.patient?.gender) {
   );
 }
 onMounted(() => {
-  form.mr_number = mr_number || "";
+  // form.mr_number = mr_number || "";
   });
 // relation type
 const selectedRelationType = ref();

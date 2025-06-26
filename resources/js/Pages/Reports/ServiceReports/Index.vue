@@ -140,6 +140,9 @@ import { Head, Link as InertiaLink, useForm } from "@inertiajs/vue3";
 import { ref, computed } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import Multiselect from "vue-multiselect";
+import flatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import "flatpickr/dist/themes/airbnb.css";
 
 const props = defineProps({
   services: Array,
@@ -180,7 +183,6 @@ export default {
     AppLayout,
     Head,
     InertiaLink,
-    flatPickr,
   },
 };
 </script>

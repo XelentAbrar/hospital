@@ -8,11 +8,7 @@
             {{ form?.id ? "Update" : "Create" }} Rooms
           </h1>
           <form
-            @submit.prevent="
-              form?.id
-              ? form.put(route('rooms.update', { id: form.id }))
-              : form.post(route('rooms.store'), form)
-            "
+            @submit.prevent="handleSubmit"
           >
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-9 py-6">
               <div class="col-span-12 sm:col-span-3">
@@ -93,6 +89,7 @@
               <button
                 type="submit"
                 class="rounded bg-primary px-5 py-2 w-24 text-sm md:text-base font-medium text-white shadow-sm border border-primary hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                :disabled="submitting"
               >
                 Save
               </button>
@@ -122,6 +119,26 @@ const form = useForm({
   room_type_id: props?.room?.room_type_id || null,
   charges: props?.room?.charges || null,
 });
+
+
+const submitting = ref(false);
+
+const handleSubmit = () => {
+  if (submitting.value) return;
+
+  submitting.value = true;
+
+  const method = form?.id ? 'put' : 'post';
+  const url = form?.id
+    ? route('rooms.update', { id: form.id })
+    : route('rooms.store');
+
+  form[method](url, {
+    onFinish: () => {
+      submitting.value = false;
+    },
+  });
+};
 
 const selectedRoomType = ref(null);
 if (props?.room) {

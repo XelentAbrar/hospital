@@ -425,12 +425,12 @@
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg">0</td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg"></td>
                         </tr>
-                        <tr class="divide-x divide-gray-400">
+                        <tr class="divide-x divide-gray-400" v-if="hasDonationModule">
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-bold text-gray-900 text-base 2xl:text-lg">Care Off</td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg"></td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg">{{ formatNumber(totalCareOff) }}</td>
                         </tr>
-                        <tr class="divide-x divide-gray-400">
+                        <tr class="divide-x divide-gray-400" v-if="hasDonationModule">
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-bold text-gray-900 text-base 2xl:text-lg">Zakat Fund</td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg"></td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-base 2xl:text-lg">{{ formatNumber(totalZF) }}</td>
@@ -500,6 +500,7 @@ const from_date = ref(null);
 const to_date = ref(null);
 const projectType = import.meta.env.VITE_PROJECT_TYPE;
 const props = defineProps({
+  hasDonationModule: Boolean,
   shifts: Array,
   reports: Object,
   from_date: String,

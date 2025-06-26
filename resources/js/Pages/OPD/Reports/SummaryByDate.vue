@@ -477,12 +477,12 @@
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg"></td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left  font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg">{{ formatNumber(totalRefund) }}</td>
                         </tr>
-                        <tr class="divide-x divide-gray-400">
+                        <tr class="divide-x divide-gray-400" v-if="hasDonationModule">
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-bold text-gray-900 text-sm md:text-base 2xl:text-lg">Care Off</td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg"></td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg">{{ formatNumber(totalCareOff) }}</td>
                         </tr>
-                        <tr class="divide-x divide-gray-400">
+                        <tr class="divide-x divide-gray-400" v-if="hasDonationModule">
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-bold text-gray-900 text-sm md:text-base 2xl:text-lg">Zakat Fund</td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg"></td>
                           <td class="whitespace-nowrap relative border-b border-gray-400 text-left font-extrabold text-gray-900 text-sm md:text-base 2xl:text-lg">{{ formatNumber(totalZF) }}</td>
@@ -557,6 +557,7 @@ import "flatpickr/dist/flatpickr.min.css";
 const from_date = ref(null);
 const to_date = ref(null);
 const props = defineProps({
+  hasDonationModule: Boolean,
   stats: Object,
   reports: Object,
   result: Object,

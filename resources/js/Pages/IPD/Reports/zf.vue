@@ -263,6 +263,7 @@ const projectType = import.meta.env.VITE_PROJECT_TYPE;
 const from_date = ref(null);
 const to_date = ref(null);
 const props = defineProps({
+  hasDonationModule:Boolean,
   reports: Object,
   from_date: String,
   to_date: String,

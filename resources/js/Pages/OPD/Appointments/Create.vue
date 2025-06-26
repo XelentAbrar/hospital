@@ -46,10 +46,11 @@
                           type="text"
                           autocomplete="mr_number"
                           @keyup.enter="focusNext($event)"
+                          @change="loadPatientData($event.target.value)"
                           ref="input0"
                           class="block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
                           step="0.01"
-                          :value="mr_number"
+                          :value="appointment.mr_number"
                         />
                       </div>
                       <InputError
@@ -95,6 +96,7 @@
                           type="text"
                           autocomplete="phone"
                           @keyup.enter="focusNext($event)"
+                          @change="loadPatientData($event.target.value)"
                           ref="input1"
                           class="block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
                           v-model="appointment.patient_phone"
@@ -119,6 +121,7 @@
                           type="text"
                           autocomplete="cnic"
                           @keyup.enter="focusNext($event)"
+                          @change="loadPatientData($event.target.value)"
                           ref="input2"
                           class="block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
                           step="0.01"
@@ -889,7 +892,7 @@ const appointment = useForm({
     ? props?.appointment?.appointment_time.substring(0, 8)
     : `${new Date().getHours().toString().padStart(2, '0')}:${new Date().getMinutes().toString().padStart(2, '0')}:00`,
   patient_name: props?.appointment?.patient_name || null,
-  mr_number: props?.appointment?.mr_number || null,
+  mr_number: props?.mr_number || null,
   patient_cnic: props?.appointment?.patient_cnic || null,
   patient_age: props?.appointment?.patient_age || null,
   patient_dob: props?.appointment?.patient_dob || null,
@@ -949,14 +952,8 @@ onMounted(() => {
     flatpickr(appointment_date.value, flatpickrOptions(appointment.appointment_date));
 
 
-  appointment.mr_number = mr_number || "";
+  // appointment.mr_number = mr_number || "";
   });
-const generateMRNumber = (event) => {
-  let input = event.target.value.replace(/\D/g, "");
-  let number = input ? parseInt(input) : 1;
-  let formattedNumber = number.toString().padStart(5, '0');
-  appointment.mr_number = formattedNumber;
-};
 const doctorOptions = computed(() => {
   return doctors.value && doctors.value.length ? doctors.value : [];
 });
@@ -977,6 +974,70 @@ const selectedPatient = ref(null);
 //     selectedPatient.value = patient;
 //   }
 // }
+
+const loadPatientData = async (patientPhone) => {
+  try {
+    const response = await axios.get(`/patients-phone/${patientPhone}`);
+    let patient = response?.data?.patient || null;
+    if (patient) {
+        appointment.patient_name = patient?.name || null;
+        appointment.patient_cnic = patient?.cnic || null;
+        appointment.mr_number = patient?.mr_number || null;
+        appointment.patient_age = patient?.age || null;
+        appointment.patient_dob = patient?.dob || null;
+        appointment.patient_gender = patient?.gender || null;
+        appointment.patient_relation_name = patient?.relation_name || null;
+        appointment.patient_relation_type = patient?.relation_type || null;
+        appointment.patient_address = patient?.address || null;
+        appointment.patient_state_id = patient?.state_id || null;
+        appointment.zf_fee = patient?.zf_fee || null;
+        appointment.careoff_id = patient?.careoff_id || null;
+        appointment.zf_id = patient?.zf_id || null;
+        appointment.welfare = patient?.welfare || null;
+        appointment.patient_city_id = patient?.city_id || null;
+        appointment.patient_country_id = patient?.country_id || null;
+        appointment.patient_phone = patient?.phone || null;
+        appointment.patient_email = patient?.email || null;
+        appointment.patient_blood_group = patient?.blood_group || null;
+        appointment.patient_rh_factor = patient?.rh_factor || null;
+        selectedCountry.value = patient?.country || null;
+        selectedState.value = patient?.country || null;
+
+        if (patient?.country) {
+          selectedCountry.value = patient?.country;
+          await loadStates(patient?.country_id);
+        }
+        if (patient?.state) {
+          selectedState.value = patient?.state;
+          await loadCities(patient?.state_id);
+        }
+        if (patient?.city) {
+          selectedCity.value = patient?.city;
+        }
+
+        if (patient?.blood_group) {
+          selectedBloodGroup.value = bloodGroupOptions.value.find(
+            (option) => option.type === patient.blood_group
+          );
+        }
+
+        if (patient?.relation_type) {
+          selectedRelationType.value = relationTypeOptions.value.find(
+            (option) => option.value === patient?.relation_type
+          );
+        }
+
+        if (patient?.gender) {
+          selectedGender.value = genderOptions.value.find(
+            (option) => option.value === patient?.gender
+          );
+        }
+        
+    }
+  } catch (error) {
+    console.error("Error fetching states:", error);
+  }
+};
 
 const onPatientSelect = async (selectedPatient) => {
   appointment.patient_id = selectedPatient.id;

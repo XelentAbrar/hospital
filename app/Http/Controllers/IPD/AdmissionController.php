@@ -151,7 +151,11 @@ class AdmissionController extends Controller
     {
         // dd($request->all());
         DB::beginTransaction();
-        $mr_number = $request->input('mr_number._value', $request->input('mr_number', null));
+
+
+        $patient = Patient::where('phone', $request->phone)->first();
+
+        // $mr_number = $request->input('mr_number._value', $request->input('mr_number', null));
         $patientData = [
             'name' => $request->name,
             'cnic' => $request->cnic,
@@ -160,18 +164,18 @@ class AdmissionController extends Controller
             'relation_name' => $request->relation_name,
             'address' => $request->address,
             'phone' => $request->phone,
-            'mr_number' => $mr_number,
+            // 'mr_number' => $mr_number,
         ];
-
-        $patient = Patient::where('phone', $request->phone)->first();
+        
         if (!$patient) {
+            $latestMrNumber = Patient::max('mr_number');
+            $mr_number = $latestMrNumber ? str_pad($latestMrNumber + 1, 5, '0', STR_PAD_LEFT) : '00001';
             $patientData['mr_number'] = $mr_number;
             $patient = Patient::create($patientData);
         } else {
             $patientData['mr_number'] = $patient->mr_number;
-            // unset($patientData['mr_number']);
-            // $patient->update($patientData);
         }
+        
         $admission = new Admission();
         $admissionData = $request->only($admission->getFillable());
         $admissionData['admission_date'] = date('Y-m-d',strtotime($admissionData['admission_date']));
@@ -209,7 +213,7 @@ class AdmissionController extends Controller
         $request->merge(['created_by' => Auth::id()]);
 
         if ($request->status == 'Complete' && empty($request->discharge_date)) {
-            \Carbon\Carbon::setLocale('Asia/Karachi');
+            date_default_timezone_set('Asia/Karachi');
             $request->merge([
                 'discharge_date' => \Carbon\Carbon::now()->toDateString(),
                 'discharge_time' => Carbon::now()->format('H:i'),
@@ -243,18 +247,20 @@ class AdmissionController extends Controller
             $details = [];
             $detailData = [];
             foreach ($request->details as $details) {
-                $detailData['admission_id'] = $admission->id;
-                $detailData['service_id'] = $details['service']['id'] ?? null;
-                $detailData['doctor_id'] = $details['doctor']['id'] ?? null;
-                $detailData['date'] = $details['date'] ?? null;
-                $detailData['is_doctor'] = $details['is_doctor'] ?? null;
-                $detailData['amount'] = $details['amount'] ?? null;
-                $detailData['service_amount'] = $details['service_amount'] ?? null;
-                $detailData['no_of_days'] = $details['no_of_days'] ?? null;
-                $detailData['day_charges'] = $details['day_charges'] ?? null;
-                $detailData['desc'] = $details['desc'] ?? null;
-                $detailData['is_posted'] = 1;
-                AdmissionDetail::create($detailData);
+                if(isset($details['service']['id']) || isset($details['doctor']['id']) || isset($details['no_of_days'])){
+                    $detailData['admission_id'] = $admission->id;
+                    $detailData['service_id'] = $details['service']['id'] ?? null;
+                    $detailData['doctor_id'] = $details['doctor']['id'] ?? null;
+                    $detailData['date'] = $details['date'] ?? null;
+                    $detailData['is_doctor'] = $details['is_doctor'] ?? null;
+                    $detailData['amount'] = $details['amount'] ?? null;
+                    $detailData['service_amount'] = $details['service_amount'] ?? null;
+                    $detailData['no_of_days'] = $details['no_of_days'] ?? null;
+                    $detailData['day_charges'] = $details['day_charges'] ?? null;
+                    $detailData['desc'] = $details['desc'] ?? null;
+                    $detailData['is_posted'] = 1;
+                    AdmissionDetail::create($detailData);
+                }
             }
         }
         $voucher_audit = new VoucherAuditService();
@@ -346,6 +352,7 @@ class AdmissionController extends Controller
         DB::beginTransaction();
 
         if ($request->status == 'Complete' && empty($request->discharge_date)) {
+            date_default_timezone_set('Asia/Karachi');
             $request->merge([
                 'discharge_date' => \Carbon\Carbon::now('Asia/Karachi')->toDateString(),
                 'discharge_time' => \Carbon\Carbon::now('Asia/Karachi')->format('H:i'),

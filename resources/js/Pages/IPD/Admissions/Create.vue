@@ -32,7 +32,7 @@
                             })
                             "> -->
                             <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-6 ">
-                                <div class="col-span-12 sm:col-span-2">
+                                <div class="col-span-12 sm:col-span-2" v-if="!form?.id">
                                     <label for="patient_id"
                                         class="block text-base font-medium leading-6 text-gray-900">Patients
                                         <!-- <span class="text-red-500">*</span> -->
@@ -58,8 +58,7 @@
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <input id="mr_number" name="mr_number" type="text" autocomplete="mr_number"
-                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
-                                        @input="generateMRNumber"  :value="props.mr_number" />
+                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11" @change="loadPatientData($event.target.value)" :value="form.mr_number" />
                                     <InputError v-if="form?.errors?.mr_number" :message="form?.errors?.mr_number" />
                                 </div>
                                 <div class="col-span-12 sm:col-span-2">
@@ -100,7 +99,7 @@
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <input id="cnic" name="cnic" type="text" autocomplete="cnic"
-                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
+                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11" @change="loadPatientData($event.target.value)"
                                         step="0.01" v-model="form.cnic" />
                                     <InputError v-if="form.errors?.cnic" :message="form.errors?.cnic" />
                                 </div>
@@ -108,7 +107,7 @@
                                     <label for="phone" class="block text-base font-medium leading-6 text-gray-900">Phone
                                         <span class="text-red-500">*</span></label>
                                     <input id="phone" name="phone" type="text" autocomplete="phone"
-                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11"
+                                        class="mt-1 block w-full rounded border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary text-sm sm:text-base h-11" @change="loadPatientData($event.target.value)"
                                         v-model="form.phone" />
                                     <InputError v-if="form.errors?.phone" :message="form.errors?.phone" />
                                 </div>
@@ -667,7 +666,8 @@ onMounted(() => {
     form.details.forEach(detail => {
         detail.date = today;
     });
-    form.mr_number = mr_number || '';
+    // alert(mr_number);
+    // form.mr_number = mr_number || '';
 });
 // const is_doctor = ref(false);
 const selectedPatient = ref(null);
@@ -704,6 +704,39 @@ if (props?.admission) {
 }
 
 
+const loadPatientData = async (patientPhone) => {
+  try {
+    const response = await axios.get(`/patients-phone/${patientPhone}`);
+    let patient = response?.data?.patient || null;
+    if (patient) {
+      form.name = patient?.name || null;
+        form.mr_number = patient?.mr_number || null;
+        // mr_number = patient?.mr_number || null;
+        form.cnic = patient?.cnic || null;
+        form.age = patient?.age || null;
+        form.dob = patient?.dob || null;
+        form.gender = patient?.gender || null;
+        form.relation_name = patient?.relation_name || null;
+        form.address = patient?.address || null;
+        form.patient_state_id = patient?.state_id || null;
+        form.patient_city_id = patient?.city_id || null;
+        form.patient_country_id = patient?.country_id || null;
+        form.phone = patient?.phone || null;
+        form.patient_email = patient?.email || null;
+
+        if (patient?.gender) {
+            selectedGender.value = genderOptions.value.find(
+                (option) => option.value === patient.gender
+            );
+            console.log("Selected Gender after loading patient:", selectedGender.value);
+        }
+        
+    }
+  } catch (error) {
+    console.error("Error fetching states:", error);
+  }
+};
+
 const onPatientSelect = async (selectedPatient) => {
     form.patient_id = selectedPatient.id;
   await loadPatient(selectedPatient.id);
@@ -715,6 +748,7 @@ const loadPatient = async (patientId) => {
         if (patient) {
             form.name = patient?.name || null;
             form.mr_number = patient?.mr_number || null;
+            // mr_number = patient?.mr_number || null;
             form.cnic = patient?.cnic || null;
             form.age = patient?.age || null;
             form.dob = patient?.dob || null;
@@ -871,12 +905,12 @@ const onServiceSelect = (val, index) => {
     calculateAmount();
 };
 
-const generateMRNumber = (event) => {
-  let input = event.target.value.replace(/\D/g, "");
-  let number = input ? parseInt(input) : 1;
-  let formattedNumber = number.toString().padStart(5, '0');
-  form.mr_number = formattedNumber;
-};
+// const generateMRNumber = (event) => {
+//   let input = event.target.value.replace(/\D/g, "");
+//   let number = input ? parseInt(input) : 1;
+//   let formattedNumber = number.toString().padStart(5, '0');
+//   form.mr_number = formattedNumber;
+// };
 
 const selectedStatus = ref({ value: "Pending", label: "Pending" });
 const statusOptions = computed(() => {

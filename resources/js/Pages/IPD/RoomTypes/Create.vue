@@ -9,11 +9,7 @@
               {{ form?.id ? "Update" : "Create" }} Room Type
             </h1>
             <form
-              @submit.prevent="
-                form?.id
-                  ? form.put(route('room-types.update', { id: form.id }))
-                  : form.post(route('room-types.store'), form)
-              "
+              @submit.prevent="handleSubmit"
             >
                 <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-6">
                   <div class="col-span-12 sm:col-span-3">
@@ -53,6 +49,7 @@
                 <button
                   type="submit"
                   class="rounded bg-primary px-5 py-2 w-24 text-sm md:text-base font-medium text-white shadow-sm border border-primary hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  :disabled="submitting"
                 >
                   Save
                 </button>
@@ -68,6 +65,7 @@
 import { Inertia } from "@inertiajs/inertia";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, useForm, Link as InertiaLink } from "@inertiajs/vue3";
+import { ref } from "vue";
 import InputError from "../../Components/InputError.vue";
 
 const props = defineProps({
@@ -78,6 +76,27 @@ const form = useForm({
   id: props?.room_type?.id || null,
   name: props?.room_type?.name || null,
 });
+
+
+const submitting = ref(false);
+
+const handleSubmit = () => {
+  if (submitting.value) return;
+
+  submitting.value = true;
+
+  const method = form?.id ? 'put' : 'post';
+  const url = form?.id
+    ? route('room-types.update', { id: form.id })
+    : route('room-types.store');
+
+  form[method](url, {
+    onFinish: () => {
+      submitting.value = false;
+    },
+  });
+};
+
 
 const cancel = () => {
   Inertia.visit(route("room-types.index"));
