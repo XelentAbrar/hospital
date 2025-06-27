@@ -35,111 +35,76 @@
                 </div>
                 <div class="mt-6 flow-root">
                     <div
-                        class="ring-1 ring-gray-200 sm:rounded-lg overflow-x-auto overflow-y-hidden"
+                        class="sm:rounded-lg shadow-md overflow-x-auto overflow-y-hidden"
                     >
-                        <table
-                            class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 overflow-auto"
-                        >
-                            <thead>
-                                <tr class="divide-x divide-gray-200">
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        ID
-                                    </th> <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Name
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Email
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Mobile
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Department
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Designation
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Employee type
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                                    >
-                                        Actions
-                                    </th>
-                                </tr>
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                              <tr>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                  ID
+                                </th>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">
+                                  Name
+                                </th>
+                                <!-- <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                  Email	
+                                </th> -->
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">
+                                  Mobile
+                                </th>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                  Designation
+                                </th>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                    Department
+                                </th>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                  Employee type	
+                                </th>
+                                <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
+                                  Actions
+                                </th>
+                              </tr>
                             </thead>
-                            <tbody>
-                                <tr
-                                    class="divide-x divide-gray-200"
-                                    v-for="(employee, index) in employees.data"
+                            <tbody class="bg-white divide-y divide-gray-200">
+                              <tr class="hover:shadow-md transition-shadow duration-200"
+                                    v-for="(employee) in employees.data"
                                     :key="employee.id"
-                                    :class="
-                                        index % 2 === 0
-                                            ? 'bg-gray-50'
-                                            : 'bg-white'
-                                    "
                                 >
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee.id }}
-                                    </td> <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
+                                <td class="py-3.5 px-4 whitespace-nowrap">
+                                      {{ employee.id }}
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap">
+                                  <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                      <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60" alt="">
+                                    </div>
+                                    <div class="ml-4">
+                                      <div class="text-sm font-medium text-gray-900">
                                         {{ employee.name }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee?.email }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee.mobile }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee?.department?.name }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee?.designation?.name }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
-                                    >
-                                        {{ employee.employee_type }}
-                                    </td>
-                                    <td
-                                        class="relative p-4 border-b border-gray-200"
-                                    >
-                                        <div
+                                      </div>
+                                      <div class="text-sm text-gray-500">
+                                           {{ employee?.email }}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap">
+                                     {{ employee.mobile }}
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-center"> 
+                                    {{ employee?.designation?.name }}
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-center">
+                                    {{ employee?.department?.name }}
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-center">
+                                  <span class="px-2 inline-flex text-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {{ employee.employee_type }}
+                                  </span>
+                                </td>
+                                <td class="py-3.5 px-4 whitespace-nowrap text-sm text-gray-500">
+                                   <div
                                             class="flex items-center justify-center space-x-3"  v-if="role && role.role_id === 1 || role && role.role_id === 7"
                                         >
                                             <InertiaLink
@@ -188,8 +153,8 @@
                                                 </svg>
                                             </button>
                                         </div>
-                                    </td>
-                                </tr>
+                                </td>
+                              </tr>
                             </tbody>
                         </table>
                     </div>
@@ -272,95 +237,105 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, Link as InertiaLink, router } from "@inertiajs/vue3";
 import { Inertia } from "@inertiajs/inertia";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 // const deleteEmployee = (id) => {
 //     if (confirm("Are you sure you want to delete this employee?")) {
 //         return Inertia.delete(route("employees.destroy", id));
 //     }
 // };
 const deleteEmployee = (id) => {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Proceed with the deletion
-            Inertia.delete(route("employees.destroy", id));
-        }
-    });
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Proceed with the deletion
+      Inertia.delete(route("employees.destroy", id));
+    }
+  });
 };
 const searchItem = async (val) => {
-    try {
-      router.visit(
-            route("employees.index", {
-                search: val,
-            }),
-            {
-                preserveState: true,
-                preserveScroll: true,
-            }
-        );
-    } catch (error) {
-        console.error("Error fetching cities:", error);
-    }
+  try {
+    router.visit(
+      route("employees.index", {
+        search: val,
+      }),
+      {
+        preserveState: true,
+        preserveScroll: true,
+      }
+    );
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+  }
 };
 </script>
 <script>
 export default {
-    props: {
-        employees: Array,
-        filters: Array,
-        pagination: Object,
-        role: Object,
-    },
-    components: {
-        AppLayout,
-        Head,
-        InertiaLink,
-    },
+  props: {
+    employees: Array,
+    filters: Array,
+    pagination: Object,
+    role: Object,
+  },
+  components: {
+    AppLayout,
+    Head,
+    InertiaLink,
+  },
 };
 </script>
 <style scoped>
 .pagination-container {
-    align-items: center;
+  align-items: center;
 }
 
 .pagination-boxes {
   margin-top: 0px;
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .pagination-box {
-    display: inline-block;
-    padding: 10px 16px;
-    background-color: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #4a4a4a;
-    transition: background-color 0.3s, color 0.3s;
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #4a4a4a;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .pagination-box:hover {
-    background-color: #e5e7eb;
-    color: #333;
+  background-color: #e5e7eb;
+  color: #333;
 }
 
+/* .current {
+  background-color: #6d4c41;
+  color: white;
+} */
 .current {
-    background-color: #6D4C41;
+    background-color: #3b7a99;
     color: white;
 }
-
 .pagination-info {
-    margin-top: 0px;
-    color: #6b7280;
-    font-size: 16px;
-    padding-left: 4px;
+  margin-top: 0px;
+  color: #6b7280;
+  font-size: 16px;
+  padding-left: 4px;
+}
+.custom_shadow {
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+.bottom_shadow {
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
 </style>

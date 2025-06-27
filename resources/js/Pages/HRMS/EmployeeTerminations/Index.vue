@@ -14,90 +14,86 @@
                 >
             </div>
             <div class="mt-6 flow-root">
-                <div class="ring-1 ring-gray-200 sm:rounded-lg overflow-x-auto overflow-y-hidden">
-                  <table class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 overflow-auto">
-                    <thead>
-                      <tr class="divide-x divide-gray-200">
-                        <th
-                          scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                        >
+              <div class="shadow-md sm:rounded-lg overflow-x-auto overflow-y-hidden mt-6">
+             <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">
                           ID
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Employee
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Termination Type
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Termination Reason
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Rermination Date
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Approved By
                         </th>
                         <th
                           scope="col"
-                          class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                          class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                         >
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr class="divide-x divide-gray-200"
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      <tr class="hover:shadow-md transition-shadow duration-200"
                         v-for="(
-                          employeeTermination, index
+                          employeeTermination
                         ) in employeeTerminations.data"
                         :key="employeeTermination.id"
-                        :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
                       >
                         <td
-                          class="whitespace-nowrap relative text-center p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4 whitespace-nowrap"
                         >
                           {{ employeeTermination.id }}
                         </td>
                         <td
-                          class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4 whitespace-nowrap"
                         >
                           {{ employeeTermination.employee.name }}
                         </td>
                         <td
-                          class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4 whitespace-nowrap"
                         >
                           {{ employeeTermination.termination_type }}
                         </td>
                         <td
-                          class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4"
                         >
                           {{ employeeTermination.termination_reason }}
                         </td>
                         <td
-                          class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4 whitespace-nowrap"
                         >
                         {{ new Date(employeeTermination.termination_date).toLocaleDateString('en-GB').replace(/\//g, '-') }}
 
                         </td>
                         <td
-                          class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200"
+                          class="py-3.5 px-4 whitespace-nowrap"
                         >
                           {{
                             employeeTermination.approved_by
@@ -106,7 +102,7 @@
                           }}
                         </td>
 
-                        <td class="relative whitespace-nowrap border-b border-gray-200 p-4">
+                        <td class="relative py-3.5 px-4 whitespace-nowrap">
                           <div class="flex items-center justify-center space-x-3" v-if="role && role.role_id === 1">
                           <InertiaLink
                             :href="
@@ -298,7 +294,7 @@ export default {
 }
 
 .current {
-    background-color: #6D4C41;
+    background-color: #3b7a99;
     color: white;
 }
 

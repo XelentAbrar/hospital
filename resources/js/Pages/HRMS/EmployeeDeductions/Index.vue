@@ -8,32 +8,32 @@
           <inertia-link :href="route('employee-deductions.create')" class="block rounded bg-primary w-fit px-4 py-2 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer">Create Employee Deduction</inertia-link>
         </div>
         <div class="mt-6 flow-root">
-          <div class="ring-1 ring-gray-200 sm:rounded-lg overflow-x-auto overflow-y-hidden">
-            <table class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 overflow-auto">
-              <thead>
-                <tr class="divide-x divide-gray-200">
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">ID</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Employee</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Deduction Type</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Deduction Nature</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Recurring Type</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Amount</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Effective Date</th>
-                  <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">
+          <div class="shadow-md sm:rounded-lg overflow-x-auto overflow-y-hidden">
+             <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">ID</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Employee</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Deduction Type</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Deduction Nature</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Recurring Type</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Amount</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">Effective Date</th>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="divide-x divide-gray-200" v-for="(employeeDeduction, index) in employeeDeductions.data" :key="employeeDeduction.id" :class="(index % 2 === 0) ? 'bg-gray-50' : 'bg-white'">
-                  <td class="whitespace-nowrap text-center relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.id }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.employee.name }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.deduction_type }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.deduction_nature }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.recurring_type }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.amount }}</td>
-                  <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">{{ employeeDeduction.deduction_month }}</td>
-                  <td class="relative whitespace-nowrap border-b border-gray-200 p-4">
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:shadow-md transition-shadow duration-200" v-for="(employeeDeduction) in employeeDeductions.data" :key="employeeDeduction.id">
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.id }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.employee.name }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.deduction_type }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.deduction_nature }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.recurring_type }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.amount }}</td>
+                  <td class="py-3.5 px-4 whitespace-nowrap">{{ employeeDeduction.deduction_month }}</td>
+                  <td class="relative py-3.5 px-4 whitespace-nowrap">
                     <div class="flex items-center justify-center space-x-3" v-if="role && role.role_id === 1">
                       <InertiaLink :href="route('employee-deductions.edit', employeeDeduction.id)">
                         <svg
@@ -214,7 +214,7 @@ export default {
 }
 
 .current {
-    background-color: #6D4C41;
+    background-color: #3b7a99;
     color: white;
 }
 

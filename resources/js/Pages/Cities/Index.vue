@@ -18,73 +18,66 @@
             </div>
           </div>
           <div class="mt-6 flow-root">
-            <div class="ring-1 ring-gray-200 sm:rounded-lg overflow-auto">
-              <table
-                class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 overflow-auto"
-              >
-                <thead>
-                  <tr class="divide-x divide-gray-200">
-                    <th
-                      scope="col"
-                      class="bg-primary backdrop-blur backdrop-filter py-3.5 pl-4 pr-3 text-center text-base md:text-lg font-medium text-white sm:pl-6"
-                    >
+            <div class="shadow-md sm:rounded-lg overflow-x-auto overflow-y-hidden">
+             <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">
                       Name
                     </th>
                     <th
                       scope="col"
-                      class="bg-primary backdrop-blur backdrop-filter py-3.5 pl-4 pr-3 text-center text-base md:text-lg font-medium text-white sm:pl-6"
+                      class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                     >
                       abrv.
                     </th>
                     <th
                       scope="col"
-                      class="bg-primary backdrop-blur backdrop-filter py-3.5 pl-4 pr-3 text-center text-base md:text-lg font-medium text-white sm:pl-6"
+                      class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                     >
                       State
                     </th>
                     <th
                       scope="col"
-                      class="bg-primary backdrop-blur backdrop-filter py-3.5 pl-4 pr-3 text-center text-base md:text-lg font-medium text-white sm:pl-6"
+                      class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                     >
                       Country
                     </th>
                     <th
                       scope="col"
-                      class="bg-primary backdrop-blur backdrop-filter py-3.5 pl-4 pr-3 text-center text-base md:text-lg font-medium text-white sm:pl-6"
+                      class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800"
                     >
                      Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr
-                    class="divide-x divide-gray-200"
-                    v-for="(city, index) in cities.data"
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr class="hover:shadow-md transition-shadow duration-200"
+                    v-for="(city) in cities.data"
                     :key="city.id"
-                    :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
                   >
                     <td
-                      class="whitespace-nowrap relative py-4 pl-4 pr-3 sm:pl-6 text-gray-900 text-sm md:text-base"
+                      class="py-3.5 px-4 whitespace-nowrap"
                     >
                       {{ city.name }}
                     </td>
                     <td
-                      class="whitespace-nowrap relative py-4 pl-4 pr-3 sm:pl-6 text-gray-900 text-sm md:text-base"
+                      class="py-3.5 px-4 whitespace-nowrap"
                     >
                       {{ city.abrv }}
                     </td>
                     <td
-                      class="whitespace-nowrap relative py-4 pl-4 pr-3 sm:pl-6 text-gray-900 text-sm md:text-base"
+                      class="py-3.5 px-4 whitespace-nowrap"
                     >
                       {{ city.state_name }}
                     </td>
                     <td
-                      class="whitespace-nowrap relative py-4 pl-4 pr-3 sm:pl-6 text-gray-900 text-sm md:text-base"
+                      class="py-3.5 px-4 whitespace-nowrap"
                     >
                       {{ city.country_name }}
                     </td>
                     <td
-                      class="relative whitespace-nowrap flex items-center justify-center space-x-1.5 md:space-x-3 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8"
+                      class="relative py-3.5 px-4 whitespace-nowrap flex items-center justify-center space-x-1.5 md:space-x-3 text-right text-sm font-medium"
                     >
                       <InertiaLink
                         :href="route('cities.edit', city.id)"
@@ -244,7 +237,7 @@ export default {
 }
 
 .current {
-    background-color: #6D4C41;
+    background-color: #3b7a99;
     color: white;
 }
 

@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 // import { defineComponent } from "vue";
 
 // export default defineComponent({
@@ -6,16 +6,17 @@
 //     admin_dashboard:Array,
 //   },
 // });
-</script>
+</script> -->
 
 <script setup>
 import { ref } from "vue";
 import { Link as InertiaLink, router } from "@inertiajs/vue3";
-import { onMounted, onUnmounted ,computed } from "vue";
+import { onMounted, onUnmounted ,computed, nextTick } from "vue";
 import VueApexCharts from "vue3-apexcharts";
 import { Inertia } from "@inertiajs/inertia";
 import toastr from 'toastr';
 import axios from 'axios';
+import DigitalClock from './Components/degitalClock.vue'
 import 'toastr/build/toastr.min.css';
 const props = defineProps(["admin_dashboard","backupMessage","hasLabModule","hasExpenseModule","hasDonationModule","hasInventoryModule"]);
 
@@ -119,16 +120,212 @@ series.value = [
 const formatNumber = (number) => {
     return new Intl.NumberFormat().format(number);
 };
+
+const areaSeries = ref([
+  {
+    name: "Expenses",
+    data: [
+      [1327359600000, 20],
+      [1327532400000, 15],
+      [1327705200000, 30],
+      [1327878000000, 20],
+      [1328050800000, 45],
+    ],
+  },
+  {
+    name: "Revenue",
+    data: [
+      [1327359600000, 20],
+      [1327446000000, 30],
+      [1327532400000, 25],
+      [1327705200000, 45],
+      [1327964400000, 60],
+    ],
+  },
+]);
+
+const areaChartOptions = ref({
+  chart: {
+    type: "area",
+    height: 250,
+    zoom: {
+      enabled: false,
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    curve: "smooth",
+  },
+  xaxis: {
+    type: "datetime",
+  },
+  tooltip: {
+    x: {
+      format: "dd MMM yyyy",
+    },
+  },
+  legend: {
+    position: "top",
+  },
+});
+
+const barChartSeries = ref([
+  {
+    name: "Indoor Patients",
+    data: [
+      [1327359600000, 30],
+      [1327532400000, 40],
+      [1327705200000, 35],
+      [1327878000000, 50],
+      [1328050800000, 49],
+    ],
+  },
+  {
+    name: "Outdoor Patients",
+    data: [
+      [1327359600000, 20],
+      [1327532400000, 30],
+      [1327705200000, 25],
+      [1327878000000, 32],
+      [1328050800000, 34],
+    ],
+  },
+  {
+    name: "Lab Patients",
+    data: [
+      [1327359600000, 10],
+      [1327532400000, 15],
+      [1327705200000, 20],
+      [1327878000000, 22],
+      [1328050800000, 30],
+    ],
+  },
+]);
+const barChartOptions = ref({
+  chart: {
+    type: "bar",
+    height: 350,
+  },
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: "55%",
+      endingShape: "rounded",
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  xaxis: {
+    type: "datetime", // Use datetime like your area chart
+  },
+  tooltip: {
+    x: {
+      format: "dd MMM yyyy",
+    },
+    y: {
+      formatter: function (val) {
+        return `${val} Patients`;
+      },
+    },
+  },
+  legend: {
+    position: "top",
+  },
+  stroke: {
+    show: true,
+    width: 2,
+    colors: ["transparent"],
+  },
+  fill: {
+    opacity: 1,
+  },
+});
+
+
+onMounted(() => {
+  nextTick(() => {
+    new Swiper(".dashboard_cards", {
+      slidesPerView: 4,
+      spaceBetween: 30,
+      loop: false,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1,
+          spaceBetween: 10,
+        },
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 30,
+        },
+      },
+    });
+  });
+});
 </script>
 
 <template>
-    <main>
-        <div class="relative isolate overflow-hidden">
+    <main class="py-8">
+        <div class="relative isolate overflow-hidden px-2 md:px-6">
             <header>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="md:col-span-3">
+                        <div class="flex flex-col md:flex-row items-center md:mb-4">
+                            <div>
+                                <button @click="triggerBackup" class="text-white bg-dark hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" :disabled="isLoading">
+                                    <span v-if="isLoading" class="flex items-center text-xl font-semibold">
 
-                <div class="flex items-center justify-between">
+                                        <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+                                        </svg>
+                                        Backup in Progress...
+                                    </span>
+                                    <span class="flex items-center text-xl font-semibold" v-else>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 me-2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                                        Initiate Backup
+                                    </span>
+                                </button>
+                            </div>
+                            <div v-if="projectType === 'jinnah'" class="flex-auto flex items-center justify-center">
+                                 <h2 class="font-bold text-4xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-black">CHINIOT HOSPITAL JC</h2>
+                            </div>
+                            <div v-if="projectType === 'hms'" class="flex-auto flex items-center justify-center text-center pt-2">
+                                    <h2 class="font-bold text-4xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-black">CHINIOT HOSPITAL SGD RD</h2>
+                            </div>
+                        </div>
+                        <div>          
+                             <div class="relative w-full h-40 rounded-lg flex items-center overflow-hidden shadow-md mt-4 md:mt-8">
+                                <img src="@/icons/img_bg_2.jpg" class="absolute inset-0 w-full h-40"/>
+                                <div class="absolute inset-0 bg-dark/80"></div>
+                                <div class="relative z-10 p-4 text-white">
+                                    <div class="text-xl font-medium">Xelent Solutions</div>
+                                    <p class="text-sm">Welcome to admin dashboard.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <DigitalClock class="" />
+                    </div>
+                </div>
+                <!-- <div class="flex items-center justify-between">
                 <div>
-                    <button @click="triggerBackup" class="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" :disabled="isLoading">
+                    <button @click="triggerBackup" class="text-white bg-dark hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" :disabled="isLoading">
                         <span v-if="isLoading" class="flex items-center text-xl font-semibold">
 
                             <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -156,30 +353,35 @@ const formatNumber = (number) => {
                             <h1 class="text-4xl font-semibold tracking-wider">{{ formattedTime }}</h1>
                         </div>
                     </div>
-            </div>
-                <div
-                    class="mx-auto flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8"
+                </div> -->
+            </header>
+            <!-- Stats -->
+            <div class="mt-8">
+            <div
+                    class="mx-auto flex flex-wrap items-center gap-6 mb-4 sm:flex-nowrap relative"
                 >
-                    <h1 class="text-base font-semibold leading-7 text-gray-900">
+                    <h1 class="text-xl font-semibold leading-7 text-gray-900">
                         Hospital flow
                     </h1>
                     <div
-                        class="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7"
+                        class="order-last flex overflow-x-auto pb-2 w-full text-base font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 xl:pl-72 sm:leading-7"
                     >
                         <InertiaLink
                             :href="route('dashboard')"
+                            class="px-4 py-1 whitespace-nowrap"
                             :class="
                                 admin_dashboard['filterDate'] == ''
-                                    ? 'text-indigo-600'
+                                    ? 'text-dark shadow-inner border-b-2 border-dark'
                                     : 'text-gray-700'
                             "
-                            >today</InertiaLink
+                            >Today</InertiaLink
                         >
                         <InertiaLink
                             :href="route('dashboard', { filterDate: 'weekly' })"
+                            class="px-4 py-1 whitespace-nowrap"
                             :class="
                                 admin_dashboard['filterDate'] == 'weekly'
-                                    ? 'text-indigo-600'
+                                    ? 'text-primary shadow-inner border-b-2 border-primary'
                                     : 'text-gray-700'
                             "
                             >Last 7 days</InertiaLink
@@ -188,109 +390,129 @@ const formatNumber = (number) => {
                             :href="
                                 route('dashboard', { filterDate: 'monthly' })
                             "
+                            class="px-4 py-1 whitespace-nowrap"
                             :class="
                                 admin_dashboard['filterDate'] == 'monthly'
-                                    ? 'text-indigo-600'
+                                    ? 'text-primary shadow-inner border-b-2 border-primary'
                                     : 'text-gray-700'
                             "
                             >Last 30 days</InertiaLink
                         >
                         <InertiaLink
                             :href="route('dashboard', { filterDate: 'all' })"
+                            class="px-4 py-1 whitespace-nowrap"
                             :class="
                                 admin_dashboard['filterDate'] == 'all'
-                                    ? 'text-indigo-600'
+                                    ? 'text-primary shadow-inner border-b-2 border-primary'
                                     : 'text-gray-700'
                             "
                             >All-time</InertiaLink
                         >
                     </div>
-
-
-
-                </div>
-
-            </header>
-
-            <!-- Stats -->
+                    <div class="flex ml-auto relative w-16 md:w-24">
+                        <!-- Navigation buttons -->
+                        <div class="swiper-button-prev absolute right-4"></div>
+                        <div class="swiper-button-next absolute right-0"></div>
+                    </div>
+            </div>
             <div>
-                <dl
-                    class="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 lg:px-2 xl:px-0 gap-4"
-                >
-                    <!-- OPD Card -->
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-green-200 via-green-500 to-green-400 px-4 py-8 rounded-lg shadow-lg">
+              <div class="swiper dashboard_cards mt-8">
+              <div class="swiper-wrapper mb-12">
+                <!-- OPD Card -->
+                <div class="swiper-slide">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-green-200 via-green-500 to-green-400 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
                         <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/ambulance.svg"/>
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-ambulance.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-ambulance.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
                             </div>
-                            <h2 class="text-xl font-bold ml-2">Outdoor Patients</h2>
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Outdoor Patients</h2>
                         </div>
                         <div class="flex items-end justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 {{ formatNumber(admin_dashboard["current_opd_cout"])}}
                             </p>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
-                                    {{ formatNumber(admin_dashboard["yesterday_opd_cout"])}}
-                                </p>
-                                <p class="text-xs">Yesterday</p>
-                                <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
+                        </div>
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                            <p class="text-lg font-semibold mt-2 group-hover:text-white">
+                                {{ formatNumber(admin_dashboard["yesterday_opd_cout"])}}
+                            </p>
+                            <p class="text-xs group-hover:text-white">Yesterday</p>
+                            <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                        </div>
                     </div>
-                    <!-- IPD Card -->
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-yellow-200 via-yellow-500 to-yellow-400 px-4 py-8 rounded-lg shadow-lg">
+                </div>
+                <!-- IPD Card -->
+                <div class="swiper-slide">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-yellow-200 via-yellow-500 to-yellow-400 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
                         <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/bed.svg"/>
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-bed.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-bed.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
                             </div>
-                            <h2 class="text-xl font-bold ml-2">Indoor Patients</h2>
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Indoor Patients</h2>
                         </div>
                         <div class="flex items-end justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 {{ formatNumber(admin_dashboard["current_ipd_cout"])}}
                             </p>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
+                        </div>
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                                <p class="text-lg font-semibold mt-2 group-hover:text-white">
                                     {{ formatNumber(admin_dashboard["yesterday_ipd_cout"])}}
                                 </p>
-                                <p class="text-xs">Yesterday</p>
+                                <p class="text-xs group-hover:text-white">Yesterday</p>
                                 <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
-                    </div>
-                    <!-- Lab Card -->
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-lime-200 via-lime-600 to-lime-500 px-4 py-8 rounded-lg shadow-lg" v-if="hasLabModule">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/laboratory.svg"/>
-                            </div>
-                            <h2 class="text-xl font-bold ml-2">Lab Patients</h2>
                         </div>
-                        <div class="flex items-end justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                    </div>
+                </div>
+                <!-- Lab Card -->
+                <div class="swiper-slide"  v-if="hasLabModule">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-lime-200 via-lime-600 to-lime-500 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
+                          <div class="flex items-center mb-4">
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-laboratory.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-laboratory.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
+                            </div>
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Lab Patients</h2>
+                          </div>
+                          <div class="flex items-end justify-between">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 {{ formatNumber(admin_dashboard["current_lab_cout"])}}
                             </p>
+                          </div>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                                <p class="text-lg font-semibold mt-2 group-hover:text-white">
                                     {{ formatNumber(admin_dashboard["yesterday_lab_cout"])}}
                                 </p>
-                                <p class="text-xs">Yesterday</p>
+                                <p class="text-xs group-hover:text-white">Yesterday</p>
                                 <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
-                    </div>
-
-                    <!-- Revenue Card -->
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-indigo-200 via-indigo-500 to-indigo-400 px-4 py-8 rounded-lg shadow-lg">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/revenue.svg"/>
-                            </div>
-                            <h2 class="text-xl font-bold ml-2">Revenue</h2>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                    </div>
+                </div>
+                <!-- Revenue Card -->
+                <div class="swiper-slide">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-indigo-200 via-indigo-500 to-indigo-400 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
+                          <div class="flex items-center mb-4">
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-revenue.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-revenue.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
+                            </div>
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Revenue</h2>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 <span class="text-sm">Rs</span>
                                 {{
                                     formatNumber(
@@ -303,9 +525,10 @@ const formatNumber = (number) => {
                                     )
                                 }}
                             </p>
+                          </div>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                                <p class="text-lg font-semibold mt-2 group-hover:text-white">
                                     <span class="text-xs">Rs</span>
 
                                     {{
@@ -325,51 +548,59 @@ const formatNumber = (number) => {
                                         )
                                     }}
                                 </p>
-                                <p class="text-xs">Yesterday</p>
+                                <p class="text-xs group-hover:text-white">Yesterday</p>
                                 <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
-                    </div>
-                    <!-- Expense Card -->
-
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-red-200 via-red-400 to-red-400 px-4 py-8 rounded-lg shadow-lg" v-if="hasExpenseModule">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/expense.svg"/>
-                            </div>
-                            <h2 class="text-xl font-bold ml-2">Expense</h2>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                    </div>
+                </div>
+                <!-- Expense Card -->
+                <div class="swiper-slide" v-if="hasExpenseModule">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-red-200 via-red-400 to-red-400 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
+                          <div class="flex items-center mb-4"> 
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-laboratory.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-laboratory.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
+                            </div> 
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Expense</h2>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 <span class="text-sm">Rs</span>
                                 {{
                                     formatNumber(+admin_dashboard["current_expense_sum"])
                                 }}
                             </p>
+                          </div>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                                <p class="text-lg font-semibold mt-2 group-hover:text-white">
                                     <span class="text-xs">Rs</span>
 
                                     {{
                                         formatNumber(+admin_dashboard["yesterday_expense_sum"])
                                     }}
                                 </p>
-                                <p class="text-xs">Yesterday</p>
+                                <p class="text-xs group-hover:text-white">Yesterday</p>
                                 <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
-                    </div>
-
-                    <!-- Cash Card -->
-
-                    <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-purple-200 via-purple-400 to-purple-400 px-4 py-8 rounded-lg shadow-lg">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-white/20 p-1 lg:p-2 rounded-full">
-                                <img class="w-6 h-6 lg:w-8 lg:h-8" src="@/icons/cash.svg"/>
-                            </div>
-                            <h2 class="text-xl font-bold ml-2">Cash In Hand</h2>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold">
+                    </div>
+                </div>
+                <!-- Cash Card -->
+                <div class="swiper-slide">
+                    <!-- <div class="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-purple-200 via-purple-400 to-purple-400 px-4 py-8 rounded-lg shadow-lg"> -->
+                    <div class="bg-white hover:bg-dark transition-all duration-300 rounded-lg custom_shadow overflow-hidden group">
+                        <div class="p-4">
+                          <div class="flex items-center mb-4">
+                            <div class="bg-dark/20 group-hover:bg-white/30 p-1.5 lg:p-3 rounded">
+                               <img src="../icons/dark-cash.svg" class="w-6 h-6 lg:w-8 lg:h-8 block group-hover:hidden"/>
+                               <img src="../icons/white-cash.svg" class="w-6 h-6 lg:w-8 lg:h-8 hidden group-hover:block"/>
+                            </div>
+                            <h2 class="text-2xl font-semibold ml-2 text-dark group-hover:text-white">Cash In Hand</h2>
+                          </div>
+                          <div class="flex items-center justify-between">
+                            <p class="text-xl sm:text-2xl xl:text-3xl font-bold group-hover:text-white">
                                 <span class="text-sm">Rs</span>
                                 {{
                                     formatNumber(
@@ -389,9 +620,10 @@ const formatNumber = (number) => {
                                     )
                                 }}
                             </p>
+                          </div>
                         </div>
-                        <div class="flex justify-between items-center mt-3 relative">
-                                <p class="text-lg font-semibold mt-2">
+                        <div class="flex justify-between items-center px-4 py-3 relative bg-dark/20">
+                                <p class="text-lg font-semibold mt-2 group-hover:text-white">
                                     <span class="text-xs">Rs</span>
 
                                     {{
@@ -414,191 +646,103 @@ const formatNumber = (number) => {
                                         )
                                     }}
                                 </p>
-                                <p class="text-xs">Yesterday</p>
+                                <p class="text-xs group-hover:text-white">Yesterday</p>
                                 <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                            </div>
-                    </div>
-                </dl>
-            </div>
-        </div>
-
-        <div class="space-y-16 py-16 xl:space-y-20">
-            <div
-                class="grid grid-cols-1 gap-6 sm:grid-cols-3 h-full overflow-y-auto"
-            >
-
-                <div
-                    class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl col-span-2"
-                >
-                    <div
-                        class="flex items-center justify-between border-b border-gray-200 bg-lightGrey px-4 py-2 sm:px-6 rounded-t-xl"
-                    >
-                        <h3 class="text-xl font-semibold leading-6 text-white">
-                            Available Doctors ({{ admin_dashboard["online_doctors"]?.filter(doctor => doctor.check_in !== null && doctor.check_out === null).length }})
-
-                        </h3>
-
-                    </div>
-                    <div class="h-96 overflow-auto scrollbar-thin">
-
-                        <table class="overflow-auto w-full h-96">
-                            <thead>
-                                <tr
-                                    class="border border-slate-300 border-b-1 border-r-0 border-l-0 w-full"
-                                >
-                                    <th
-                                        scope="col"
-                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                                    >
-                                        Doctor
-                                    </th>
-
-                                    <th
-                                        scope="col"
-                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                    >
-                                        Patients
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                    >
-                                        Check In
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                    >
-                                        Check Out
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="online_doctors in admin_dashboard[
-                                        'online_doctors'
-                                    ]"
-                                    class="border border-slate-300 border-b-1 border-r-0 border-l-0 w-full"
-                                >
-                                    <td class="whitespace-nowrap py-2 text-black">
-                                        <div class="flex items-center gap-2">
-                                            <!-- <span class="inline-block   h-12 w-12 overflow-hidden rounded-full bg-gray-100"> -->
-                                            <!-- <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg> -->
-                                            <div
-                                                class="flex-none rounded-full bg-emerald-500/20 p-1"
-                                                v-if="
-                                                    online_doctors?.check_out ==
-                                                    null &&   online_doctors?.check_in !=null
-                                                "
-                                            >
-                                                <div
-                                                    class="h-1.5 w-1.5 rounded-full bg-emerald-500"
-                                                ></div>
-                                            </div>
-                                            <div
-                                                class="flex-none rounded-full bg-gray-500/20 p-1"
-                                                v-if="
-                                                    online_doctors?.check_out !=
-                                                    null &&   online_doctors?.check_in !=null
-                                                "
-                                            >
-                                                <div
-                                                    class="h-1.5 w-1.5 rounded-full bg-gray-500"
-                                                ></div>
-                                            </div>
-                                            <div
-                                                class="flex-none rounded-full bg-red-500/20 p-1"
-                                                v-if="
-                                                    online_doctors?.check_in ==
-                                                    null
-                                                "
-                                            >
-                                                <div
-                                                    class="h-1.5 w-1.5 rounded-full bg-red-500"
-                                                ></div>
-                                            </div>
-                                            <!-- </span> -->
-                                            <span class="text-gray-900">{{
-                                                online_doctors?.employee?.name
-                                            }}</span>
-                                            <!-- <p
-                                                class="text-sm leading-6 text-gray-900"
-                                            >
-                                                ({{
-                                                    online_doctors?.employee
-                                                        ?.doctor_type
-                                                }})
-                                            </p> -->
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap px-4 py-2 text-center"
-                                    >
-
-                                        <span class="text-center" v-if="online_doctors.check_in != null">{{
-                                            online_doctors?.employee
-                                                ?.appointment_count
-                                       + online_doctors?.employee?.admission_count }}
-                                          </span>
-                                    </td>
-                                    <td class="text-right justify-content-end pr-4">
-                                        <div
-                                            class="hidden sm:flex sm:flex-col sm:items-end"
-                                        >
-                                            <!-- <p class="text-sm leading-6 text-gray-900">{{online_doctors?.employee?.doctor_type}}</p> -->
-                                            <div
-                                                class="mt-1 flex items-center gap-x-1.5"
-                                            >
-                                                <p
-                                                    class="text-xs leading-5 text-gray-500"
-                                                >
-                                                    {{ online_doctors?.check_in }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-right justify-content-end pr-4">
-                                        <div
-                                            class="hidden sm:flex sm:flex-col sm:items-end"
-                                        >
-                                            <!-- <p class="text-sm leading-6 text-gray-900">{{online_doctors?.employee?.doctor_type}}</p> -->
-                                            <div
-                                                class="mt-1 flex items-center gap-x-1.5"
-                                            >
-                                                <!-- <div class="flex-none rounded-full bg-emerald-500/20 p-1">
-                                        <div class="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
-                                    </div> -->
-                                                <p
-                                                    class="text-xs leading-5 text-gray-500"
-                                                >
-                                                    {{ online_doctors?.check_out }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
+                        </div>
                     </div>
                 </div>
+              </div>
+              <!-- Pagination -->
+              <div class="swiper-pagination"></div>
+              </div>
+            </div>
+            </div>    
+        </div>
+
+        <div class="pt-4 px-2 md:px-6">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-6 h-full">
+               <!--Graph-->
+                <div class="overflow-hidden bg-white custom_shadow ring-1  ring-gray-900/5 rounded-lg md:col-span-3">
                 <div
-                    class="overflow-hidden bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl"
+                    class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6"
                 >
+                    <h3 class="text-2xl font-semibold leading-6 text-dark">
+                        Financial Record
+                    </h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 cursor-pointer">
+                      <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clip-rule="evenodd" />
+                    </svg>
+                </div>    
+                <div class="p-4">
+                    <!-- Area Chart with Multiple Lines --> 
+                    <apexchart
+                      height="350"
+                      type="area"
+                      :options="areaChartOptions"
+                      :series="areaSeries"
+                    ></apexchart>
+                </div>
+                </div>
+               <!-- Bar Chart: Patients Over Time -->
+                <div class="overflow-hidden bg-white custom_shadow ring-1 ring-gray-900/5 rounded-lg md:col-span-3">
+                <div class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6">
+                  <h3 class="text-2xl font-semibold leading-6 text-dark">
+                    Patient Visits Over Time
+                  </h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 cursor-pointer">
+                      <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="p-4">
+                    <apexchart
+                      height="350"
+                      type="bar"
+                      :options="barChartOptions"
+                      :series="barChartSeries"
+                    ></apexchart>
+                </div>
+                </div>
+                <!--Patient graph-->
+                <div class="overflow-hidden bg-white custom_shadow ring-1 ring-gray-900/5 rounded-lg md:col-span-2">
                     <div
-                        class="flex items-center justify-between border-b border-gray-200 bg-lightGrey px-4 py-2 sm:px-6"
+                        class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6"
                     >
-                        <h3 class="text-xl font-semibold leading-6 text-white">
-                            Recent Patients
+                        <h3 class="text-2xl font-semibold leading-6 text-dark">
+                            Patients by gender
                         </h3>
-                        <!-- <InertiaLink
-                            :href="route('appointments.index')"
-                            class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-darkGrey rounded-lg hover:bg-darkGrey/70 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 cursor-pointer">
+                          <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- <button
+                            type="button"
+                            class="px-3 py-2 text-sm font-semibold text-center inline-flex items-center text-dark bg-dark/20 rounded hover:bg-dark hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
                         >
                             View all
-                        </InertiaLink> -->
+                        </button> -->
+                    </div>
+                    <div class="flex justify-center mt-16">
+                        <apexchart
+                            width="400"
+                            type="donut"
+                            :options="chartOptions"
+                            :series="series"
+                        ></apexchart>
+                    </div>
+                </div>
+                <!--Patient list-->
+                <div class="overflow-hidden bg-white custom_shadow ring-1 ring-gray-900/5 rounded-lg md:col-span-4">
+                    <div
+                        class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6"
+                    >
+                        <h3 class="text-2xl font-semibold leading-6 text-dark">
+                            Recent Patients
+                        </h3>
+                        <!-- :href="route('appointments.index')" -->
+                        <InertiaLink
+                            class="px-3 py-2 text-sm font-semibold text-center inline-flex items-center text-dark bg-dark/20 rounded hover:bg-dark hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
+                        >
+                            View all
+                        </InertiaLink>
                     </div>
                     <div class="flow-root">
                         <div
@@ -611,8 +755,8 @@ const formatNumber = (number) => {
                                     <table
                                         class="min-w-full divide-y divide-gray-300"
                                     >
-                                        <thead class="bg-gray-50">
-                                            <tr>
+                                        <thead>
+                                            <tr class="bg-gray-100">
                                                 <th
                                                     scope="col"
                                                     class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
@@ -729,32 +873,309 @@ const formatNumber = (number) => {
                         </div>
                     </div>
                 </div>
-
-                <div
-                    class="overflow-hidden bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl col-span-2"
-                >
+                <!--Admitted Patient list-->
+                <div class="overflow-hidden bg-white custom_shadow ring-1 ring-gray-900/5 rounded-lg md:col-span-3">
                     <div
-                        class="flex items-center justify-between border-b border-gray-200 bg-lightGrey px-4 py-2 sm:px-6"
+                        class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6"
                     >
-                        <h3 class="text-xl font-semibold leading-6 text-white">
-                            Patients by gender
+                        <h3 class="text-2xl font-semibold leading-6 text-dark">
+                            Admitted Patients
                         </h3>
-                        <!-- <button
-                            type="button"
-                            class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-darkGrey rounded-lg hover:bg-darkGrey/70 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                        <!-- :href="route('appointments.index')" -->
+                        <InertiaLink
+                            class="px-3 py-2 text-sm font-semibold text-center inline-flex items-center text-dark bg-dark/20 rounded hover:bg-dark hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
                         >
                             View all
-                        </button> -->
+                        </InertiaLink>
                     </div>
-                    <div class="flex justify-center mt-16">
-                        <apexchart
-                            width="500"
-                            type="donut"
-                            :options="chartOptions"
-                            :series="series"
-                        ></apexchart>
+                    <div class="flow-root">
+                        <div
+                            class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8"
+                        >
+                            <div
+                                class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
+                            >
+                                <div class="overflow-hidden">
+                                    <table
+                                        class="min-w-full divide-y divide-gray-300"
+                                    >
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th
+                                                    scope="col"
+                                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                                                >
+                                                    Name
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                >
+                                                    Gender
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                >
+                                                    Type
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                                                >
+                                                    <span class="sr-only"
+                                                        >Amount</span
+                                                    >
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody
+                                            class="divide-y divide-gray-200 bg-white"
+                                        >
+                                            <tr
+                                                v-for="latest_opd_patient in admin_dashboard[
+                                                    'latest_opd_patient'
+                                                ]"
+                                            >
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                                                >
+                                                    {{
+                                                        latest_opd_patient.patient_name
+                                                    }}
+                                                </td>
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                                                >
+                                                    {{
+                                                        latest_opd_patient.patient_gender
+                                                    }}
+                                                </td>
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                                                >
+                                                    Outdoor
+                                                </td>
+                                                <td
+                                                    class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+                                                >
+                                                    <span
+                                                        class="text-indigo-600"
+                                                        >Rs
+                                                        {{
+                                                            formatNumber(
+                                                                latest_opd_patient
+                                                                    ?.appointment_details[0]
+                                                                    ?.fee
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </td>
+                                            </tr>
+                                            <tr
+                                                v-for="latest_ipd_patient in admin_dashboard[
+                                                    'latest_ipd_patient'
+                                                ]"
+                                            >
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                                                >
+                                                    {{
+                                                        latest_ipd_patient.name
+                                                    }}
+                                                </td>
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                                                >
+                                                    {{
+                                                        latest_ipd_patient.gender
+                                                    }}
+                                                </td>
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                                                >
+                                                    Indoor
+                                                </td>
+                                                <td
+                                                    class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+                                                >
+                                                    <span
+                                                        class="text-indigo-600"
+                                                        >Rs
+                                                        {{
+                                                            formatNumber(
+                                                                latest_ipd_patient?.total_amount
+                                                            )
+                                                        }}</span
+                                                    >
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <!--Doctor list-->
+                <div class="bg-white custom_shadow ring-1 ring-gray-900/5 rounded-lg md:col-span-3">
+                    <div
+                        class="flex items-center justify-between border-b border-gray-200 px-4 py-2 sm:py-4 sm:px-6 rounded-t-xl"
+                    >
+                        <h3 class="text-2xl font-semibold leading-6 text-dark">
+                            Available Doctors ({{ admin_dashboard["online_doctors"]?.filter(doctor => doctor.check_in !== null && doctor.check_out === null).length }})
+                        </h3>
+                        <button
+                            type="button"
+                            class="px-3 py-2 text-sm font-semibold text-center inline-flex items-center text-dark bg-dark/20 rounded hover:bg-dark hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
+                        >
+                            View all
+                        </button>
+                    </div>
+                    <div class="h-96 overflow-auto scrollbar-thin mb-4 relative">
+
+                        <table class="overflow-auto w-full h-96">
+                            <thead>
+                                <tr
+                                    class="w-full bg-gray-50"
+                                >
+                                    <th
+                                        scope="col"
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sticky top-0 bg-gray-100 border-b border-gray-300 sm:pl-6"
+                                    >
+                                        Doctor
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sticky top-0 bg-gray-100 border-b border-gray-300"
+                                    >
+                                        Patients
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sticky top-0 bg-gray-100 border-b border-gray-300"
+                                    >
+                                        Check In
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sticky top-0 bg-gray-100 border-b border-gray-300"
+                                    >
+                                        Check Out
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="online_doctors in admin_dashboard[
+                                        'online_doctors'
+                                    ]"
+                                    class="border border-slate-300 border-b-1 border-r-0 border-l-0 w-full"
+                                >
+                                    <td class="whitespace-nowrap py-2 pl-4 pr-3 text-black">
+                                        <div class="flex items-center gap-2">
+                                            <!-- <span class="inline-block   h-12 w-12 overflow-hidden rounded-full bg-gray-100"> -->
+                                            <!-- <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg> -->
+                                            <div
+                                                class="flex-none rounded-full bg-emerald-500/20 p-1"
+                                                v-if="
+                                                    online_doctors?.check_out ==
+                                                    null &&   online_doctors?.check_in !=null
+                                                "
+                                            >
+                                                <div
+                                                    class="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                                                ></div>
+                                            </div>
+                                            <div
+                                                class="flex-none rounded-full bg-gray-500/20 p-1"
+                                                v-if="
+                                                    online_doctors?.check_out !=
+                                                    null &&   online_doctors?.check_in !=null
+                                                "
+                                            >
+                                                <div
+                                                    class="h-1.5 w-1.5 rounded-full bg-gray-500"
+                                                ></div>
+                                            </div>
+                                            <div
+                                                class="flex-none rounded-full bg-red-500/20 p-1"
+                                                v-if="
+                                                    online_doctors?.check_in ==
+                                                    null
+                                                "
+                                            >
+                                                <div
+                                                    class="h-1.5 w-1.5 rounded-full bg-red-500"
+                                                ></div>
+                                            </div>
+                                            <!-- </span> -->
+                                            <span class="text-gray-900">{{
+                                                online_doctors?.employee?.name
+                                            }}</span>
+                                            <!-- <p
+                                                class="text-sm leading-6 text-gray-900"
+                                            >
+                                                ({{
+                                                    online_doctors?.employee
+                                                        ?.doctor_type
+                                                }})
+                                            </p> -->
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="whitespace-nowrap px-4 py-2 text-center"
+                                    >
+
+                                        <span class="text-center" v-if="online_doctors.check_in != null">{{
+                                            online_doctors?.employee
+                                                ?.appointment_count
+                                       + online_doctors?.employee?.admission_count }}
+                                          </span>
+                                    </td>
+                                    <td class="text-right justify-content-end pr-4">
+                                        <div
+                                            class="hidden sm:flex sm:flex-col sm:items-end"
+                                        >
+                                            <!-- <p class="text-sm leading-6 text-gray-900">{{online_doctors?.employee?.doctor_type}}</p> -->
+                                            <div
+                                                class="mt-1 flex items-center gap-x-1.5"
+                                            >
+                                                <p
+                                                    class="text-xs leading-5 text-gray-500"
+                                                >
+                                                    {{ online_doctors?.check_in }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right justify-content-end pr-4">
+                                        <div
+                                            class="hidden sm:flex sm:flex-col sm:items-end"
+                                        >
+                                            <!-- <p class="text-sm leading-6 text-gray-900">{{online_doctors?.employee?.doctor_type}}</p> -->
+                                            <div
+                                                class="mt-1 flex items-center gap-x-1.5"
+                                            >
+                                                <!-- <div class="flex-none rounded-full bg-emerald-500/20 p-1">
+                                        <div class="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                                    </div> -->
+                                                <p
+                                                    class="text-xs leading-5 text-gray-500"
+                                                >
+                                                    {{ online_doctors?.check_out }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>        
             </div>
         </div>
     </main>
@@ -812,4 +1233,38 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+
+.swiper-button-next:after, .swiper-button-prev:after{
+    font-size: 20px !important;
+    font-weight: 800;
+}
+.swiper-button-next, .swiper-button-prev {
+    border: 2px solid #0d3b66;
+    color: #0d3b66;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+.swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #0d3b66;
+}
+.custom_shadow{
+box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; */
+    /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+    /* box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px; */
+}
+
+@media (max-width: 400px) {
+    .swiper-button-next:after, .swiper-button-prev:after{
+    font-size: 16px !important;
+}
+.swiper-button-next, .swiper-button-prev {
+    width: 25px;
+    height: 25px;
+}
+}
 </style>
+

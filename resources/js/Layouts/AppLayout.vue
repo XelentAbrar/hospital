@@ -386,7 +386,7 @@ export default {
         <SearchModel />
 
         <div class="min-h-screen bg-gray-50">
-           <nav class="bg-lightGrey border-b border-gray-100 shadow-md font-saira">
+           <nav class="bg-primary border-b border-gray-100 shadow-md font-saira">
 
                 <!-- Primary Navigation Menu -->
                 <div class="w-full mx-auto px-4 sm:px-4 lg:px-8">
@@ -401,6 +401,9 @@ export default {
                             <h1 class="shrink-0 flex items-center ml-6 text-white font-medium mt-0.5" v-if="projectType === 'jinnah'">JC HMS</h1>
                             <h1 class="shrink-0 flex items-center ml-6 text-white font-medium mt-0.5" v-if="projectType === 'hms'">SGD HMS</h1>
 
+                        </div>
+                        <div>
+    
                             <template v-if="roles.includes(1)">
                                     <AdminNavbar :hasExpenseModule="hasExpenseModule" :hasDonationModule="hasDonationModule" :hasLabModule="hasLabModule" :hasAccountsModule="hasAccountsModule" />
                                 </template>
@@ -435,7 +438,6 @@ export default {
                                     <ReceptionistNavbar :hasExpenseModule="hasExpenseModule" :hasDonationModule="hasDonationModule" :hasLabModule="hasLabModule" :hasAccountsModule="hasAccountsModule" />
                                 </template>
                         </div>
-
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
                             <div class="ml-3 relative">
                                 <!-- Teams Dropdown -->

@@ -10,7 +10,7 @@
           </h1>
           <!-- <inertia-link :href="route('departments.create')" class="block rounded bg-primary w-fit px-4 py-2 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer">Create Department</inertia-link> -->
         </div>
-        <div class="mt-6 flow-root">
+        <div class="mt-4 flow-root">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-4 items-center">
               <div>
                 <label
@@ -19,7 +19,7 @@
                   >Attendance Date</label
                 >
                 <flat-pickr
-                  class="block cursor-pointer w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block cursor-pointer w-full rounded border-0 py-2.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   v-model="filters.date"
                   :config="dateConfig"
                 ></flat-pickr>
@@ -54,79 +54,73 @@
               </div>
               <div class="mt-5">
                 <button
-                  class="block rounded bg-primary w-fit px-4 py-2 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                  class="block rounded bg-primary w-fit px-4 py-2.5 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
                   @click="applyFilters"
                 >
                   Apply Filters
                 </button>
               </div>
             </div>
-          <div class="ring-1 ring-gray-200 sm:rounded-lg overflow-x-auto overflow-y-hidden mt-4">
-            <table class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 overflow-auto">
-              <thead>
-                <tr class="divide-x divide-gray-200">
-                  <!-- <th scope="col" class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white">Date</th> -->
-                  <th
-                    scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
-                  >
+          <div class="shadow-md sm:rounded-lg overflow-x-auto overflow-y-hidden mt-6">
+             <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th scope="col" class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800">
                     Department
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                   >
                     Employee
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-left text-base md:text-lg font-medium text-gray-800"
                   >
                     Designation
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800"
                   >
                     Check In
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800"
                   >
                     Check Out
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800"
                   >
                     Remarks
                   </th>
                   <th
                     scope="col"
-                    class="bg-primary whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-white"
+                    class="whitespace-nowrap py-3.5 px-4 text-center text-base md:text-lg font-medium text-gray-800"
                   >
                     Update
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr
-                    class="divide-x divide-gray-200"
-                    v-for="(employee, index) in employees.data"
+               <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:shadow-md transition-shadow duration-200"
+                    v-for="(employee) in employees.data"
                     :key="employee.id"
-                    :class="index % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
                   >
-                    <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       {{ employee.department.name }}
                     </td>
-                    <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       {{ employee.name }}
                     </td>
-                    <td class="whitespace-nowrap relative p-4 text-gray-900 text-sm md:text-base border-b border-gray-200">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       {{ employee?.designation?.name }}
                     </td>
-                    <td class="whitespace-nowrap relative p-2 text-gray-900 text-sm md:text-base border-b border-gray-200">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       <input
                         v-if="employee.daily_attendances?.[0]"
                         v-model="employee.daily_attendances[0].check_in"
@@ -144,7 +138,7 @@
                         class="not-found block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </td>
-                    <td class="whitespace-nowrap border-b border-gray-200 p-2 text-sm font-medium text-gray-900">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       <input
                         v-if="employee.daily_attendances?.[0]"
                         v-model="employee.daily_attendances[0].check_out"
@@ -162,7 +156,7 @@
                         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </td>
-                    <td class="whitespace-nowrap border-b border-gray-200 p-2">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       <input
                         v-if="employee.daily_attendances?.[0]"
                         v-model="employee.daily_attendances[0].remarks"
@@ -180,9 +174,9 @@
                         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </td>
-                    <td class="relative p-2 py-2.5 flex border-b border-gray-200">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       <button
-                        class="px-3 py-1.5 bg-blue-500 text-white mx-auto rounded"
+                        class="px-3 py-1.5 bg-[#6FA3D8] text-white mx-auto rounded"
                         @click="saveAttendance(employee)"
                       >
                         Save
@@ -437,7 +431,7 @@ export default {
     color: #333;
 }
 .current {
-    background-color: #6D4C41;
+    background-color: #3b7a99;
     color: white;
 }
 .pagination-info {
@@ -445,5 +439,8 @@ export default {
     color: #6b7280;
     font-size: 16px;
     padding-left: 4px;
+}
+.multiselect__tags{
+  border-radius: 4px !important;
 }
 </style>
