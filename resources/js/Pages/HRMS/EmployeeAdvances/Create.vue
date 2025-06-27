@@ -200,6 +200,7 @@
                 <button
                   type="submit"
                   class="rounded bg-primary px-5 py-2 w-24 text-sm md:text-base font-medium text-white shadow-sm border border-primary hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  :disabled="submitting"
                 >
                   Save
                 </button>
@@ -463,7 +464,13 @@ const updateSchedule = () => {
   }
 };
 
+const submitting = ref(false);
+
 const submitForm = () => {
+  if (submitting.value) return;
+
+  submitting.value = true;
+  
   generateDeductionSchedule();
 
   let paidAmount = 0;
@@ -499,7 +506,11 @@ const submitForm = () => {
 
   console.log("Final form data:", formData);
   // Submit the cloned form data
-  formData.post("/employee-advances");
+  formData.post("/employee-advances", {
+    onFinish: () => {
+      submitting.value = false;
+    },
+  });
   // Inertia.post(route('employee-advances.store'), formData);
 };
 

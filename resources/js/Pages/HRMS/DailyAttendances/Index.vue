@@ -11,6 +11,7 @@
           <!-- <inertia-link :href="route('departments.create')" class="block rounded bg-primary w-fit px-4 py-2 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer">Create Department</inertia-link> -->
         </div>
         <div class="mt-4 flow-root">
+          <form @submit.prevent="form.get(route('daily-attendances.index'))" enctype="multipart/form-data">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-4 items-center">
               <div>
                 <label
@@ -31,12 +32,16 @@
                   >Department</label
                 >
                 <multiselect
-                  v-model="filters.department"
+                  v-model="selectedDepartment"
                   :options="departments"
+                  :searchable="true"
+                  :close-on-select="true"
+                  :show-labels="false"
+                  @update:modelValue="onDepartmentSelect"
+                  placeholder="Select department"
                   label="name"
                   track-by="id"
-                  placeholder="Select Department"
-                ></multiselect>
+                />
               </div>
               <div>
                 <label
@@ -45,22 +50,28 @@
                   >Employee</label
                 >
                 <multiselect
-                  v-model="filters.employee"
-                  :options="employees.data"
+                  v-model="selectedEmployee"
+                  :options="employees_data"
+                  :searchable="true"
+                  :close-on-select="true"
+                  :show-labels="false"
+                  @update:modelValue="onEmployeeSelect"
+                  placeholder="Select employee"
                   label="name"
                   track-by="id"
-                  placeholder="Select Employee"
-                ></multiselect>
+                />
               </div>
               <div class="mt-5">
                 <button
                   class="block rounded bg-primary w-fit px-4 py-2.5 text-center text-sm md:text-base font-medium text-white shadow-sm hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
-                  @click="applyFilters"
-                >
+                  type="submit"
+                  >
+                  <!-- @click="applyFilters" -->
                   Apply Filters
                 </button>
               </div>
             </div>
+          </form>
           <div class="shadow-md sm:rounded-lg overflow-x-auto overflow-y-hidden mt-6">
              <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-100">
@@ -178,6 +189,7 @@
                       <button
                         class="px-3 py-1.5 bg-[#6FA3D8] text-white mx-auto rounded"
                         @click="saveAttendance(employee)"
+                        :disabled="submitting"
                       >
                         Save
                       </button>
@@ -267,7 +279,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head, Link as InertiaLink,router } from "@inertiajs/vue3";
+import { Head, Link as InertiaLink,router,useForm } from "@inertiajs/vue3";
 import { ref, computed, watch, onMounted, reactive } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import Multiselect from "vue-multiselect";
@@ -279,8 +291,11 @@ import Swal from 'sweetalert2';
 
 const props = defineProps({
   departments: Array,
+  employees_data: Array,
   employees: Array,
   message: String,
+  department_id: String,
+  employee_id: String,
 });
 
 let filters = ref({
@@ -290,6 +305,44 @@ let filters = ref({
   department: null,
   employee: null,
 });
+
+
+const form = useForm({
+  department_id: props?.department_id || null,
+  employee_id: props?.employee_id || null,
+});
+
+const selectedDepartment = ref(null);
+
+const onDepartmentSelect = async (selectedDepartment) => {
+  form.department_id = selectedDepartment?.id || null;
+};
+
+if (props?.department_id) {
+  const coas = props.departments.find(
+    (c) => c.id == props.department_id
+  );
+  if (coas) {
+    selectedDepartment.value = coas;
+  }
+}
+
+
+
+const selectedEmployee = ref(null);
+
+const onEmployeeSelect = async (selectedEmployee) => {
+  form.employee_id = selectedEmployee?.id || null;
+};
+
+if (props?.employee_id) {
+  const coas = props.employees_data.find(
+    (c) => c.id == props.employee_id
+  );
+  if (coas) {
+    selectedEmployee.value = coas;
+  }
+}
 
 let dateConfig = {
   altFormat: "F j, Y",
@@ -315,17 +368,17 @@ const applyFilters = () => {
 
   history.pushState({}, "", url);
   console.log(url.toString());
-//   Inertia.get(url).catch((error) => {
-//     console.error("An error occurred:", error);
-//   });
-Inertia.get(url.toString(), {}, { preserveState: true })
-    .then(response => {
-      console.log(response);
-        employees.value = response.data.employees;
-    })
-    .catch(error => {
-      console.error("An error occurred:", error);
-    });
+  //   Inertia.get(url).catch((error) => {
+  //     console.error("An error occurred:", error);
+  //   });
+  Inertia.get(url.toString(), {}, { preserveState: true })
+      .then(response => {
+        console.log(response);
+          employees.value = response.data.employees;
+      })
+      .catch(error => {
+        console.error("An error occurred:", error);
+      });
 };
 let newAttendance = ref({
   check_in: null,
@@ -340,7 +393,15 @@ const getNewAttendance = (employee) => {
   return employee.newAttendance;
 };
 
+const submitting = ref(false);
+
 const saveAttendance = (employee) => {
+
+  if (submitting.value) return;
+
+  submitting.value = true;
+
+
   const attendances = Array.isArray(employee.daily_attendances)
     ? employee.daily_attendances
     : [];
@@ -357,6 +418,7 @@ const saveAttendance = (employee) => {
   axios
     .post("/update-attendance", data)
     .then((response) => {
+      submitting.value = false;
         Swal.fire({
         title: 'Success!',
         text: 'Attendance saved successfully.',
@@ -365,6 +427,7 @@ const saveAttendance = (employee) => {
       });
     })
     .catch((error) => {
+      submitting.value = false;
       console.error("An error occurred:", error);
       Swal.fire({
         title: 'Error!',

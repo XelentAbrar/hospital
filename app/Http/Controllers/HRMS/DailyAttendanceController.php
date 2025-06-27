@@ -51,9 +51,12 @@ class DailyAttendanceController extends Controller
         $user = Auth::user();
         $role = UserRole::where('user_id', $user->id)->where('role_id', 1)->first();
         return Inertia::render('HRMS/DailyAttendances/Index', [
+            'employees_data' => Employee::select('id','name')->orderBy('name', 'asc')->get(),
             'employees' => $employees,
             'role' => $role,
             'departments' => $departments,
+            'department_id' => $departmentId,
+            'employee_id' => $employeeId,
         ]);
     }
 

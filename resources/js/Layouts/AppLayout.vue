@@ -159,7 +159,7 @@ const payrollMenuItems = [
         { name: 'Warnings', href: route('employee-warnings.index'), icon: 'Bars2Icon' },
         { name: 'Promotion', href: route('employee-promotions.index'), icon: 'Bars2Icon' },
         { name: 'Termination', href: route('employee-terminations.index'), icon: 'Bars2Icon' },
-        { name: 'Leave Applications', href: '#', icon: 'Bars2Icon' },
+        // { name: 'Leave Applications', href: '#', icon: 'Bars2Icon' },
     ],
   },
   {

@@ -279,19 +279,21 @@ if (props?.service) {
   }
 }
 
-const selectedCoa = ref(null);
-if (props?.service) {
-  const coas = props.coa.find(
-    (c) => c.id === props.service.coa_id
-  );
-  if (coas) {
-    selectedCoa.value = coas;
+if(props?.hasAccountsModule){
+  const selectedCoa = ref(null);
+  if (props?.service) {
+    const coas = props.coa.find(
+      (c) => c.id === props.service.coa_id
+    );
+    if (coas) {
+      selectedCoa.value = coas;
+    }
   }
+  
+  const onCoaSelect = async (selectedCoa) => {
+    form.coa_id = selectedCoa?.id ?? null;
+  };
 }
-
-const onCoaSelect = async (selectedCoa) => {
-  form.coa_id = selectedCoa?.id ?? null;
-};
 
 
 // const categoryOptions = computed(() => {

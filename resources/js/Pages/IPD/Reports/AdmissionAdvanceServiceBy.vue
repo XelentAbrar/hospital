@@ -386,8 +386,8 @@ const flatpickrOptions = (defaultDate) => ({
     defaultDate: defaultDate || new Date(),
 });
 
-flatpickr(to_date.value, flatpickrOptions(report.to_date));
-flatpickr(from_date.value, flatpickrOptions(report.from_date));
+flatpickr(to_date.value, flatpickrOptions(filter.to_date));
+flatpickr(from_date.value, flatpickrOptions(filter.from_date));
 
 });
 const print = () => {

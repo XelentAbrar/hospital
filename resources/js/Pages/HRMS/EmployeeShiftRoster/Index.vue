@@ -102,7 +102,7 @@
                     <form
                         @submit.prevent="storeRoster()"
                         v-if="
-                            employees.data.filter((item) => item.selected)
+                            employeRoasterListing.filter((item) => item.selected)
                                 .length > 0 ||
                             Object.keys(roster.errors).length > 0
                         "
@@ -380,16 +380,18 @@
                                     <td
                                         class="whitespace-nowrap relative text-center p-2 text-gray-900 text-sm md:text-base border-b border-gray-200"
                                     >
-                                        <multiselect
-                                            v-model="employee.departmentId"
-                                            :options="departments"
-                                            :searchable="true"
-                                            :close-on-select="true"
-                                            :show-labels="false"
-                                            placeholder="Select department"
-                                            label="name"
-                                            track-by="id"
-                                        />
+                                        <template v-if="employeRoasterListing[employee.id]">
+                                            <multiselect
+                                                v-model="employeRoasterListing[employee.id].departmentId"
+                                                :options="departments"
+                                                :searchable="true"
+                                                :close-on-select="true"
+                                                :show-labels="false"
+                                                placeholder="Select department"
+                                                label="name"
+                                                track-by="id"
+                                            />
+                                        </template>
                                         <div v-if="roster && roster.errors">
                                             <div
                                                 v-for="(
@@ -421,8 +423,9 @@
                                     <td
                                         class="whitespace-nowrap relative text-center p-2 text-gray-900 text-sm md:text-base border-b border-gray-200"
                                     >
+                                    <template v-if="employeRoasterListing[employee.id]">
                                         <multiselect
-                                            v-model="employee.rosterTypeId"
+                                            v-model="employeRoasterListing[employee.id].rosterTypeId"
                                             :options="rosterTypes"
                                             :searchable="true"
                                             :close-on-select="true"
@@ -431,6 +434,7 @@
                                             label="name"
                                             track-by="id"
                                         />
+                                    </template>
                                         <div v-if="roster && roster.errors">
                                             <div
                                                 v-for="(
@@ -462,8 +466,9 @@
                                     <td
                                         class="whitespace-nowrap relative text-center p-2 text-gray-900 text-sm md:text-base border-b border-gray-200"
                                     >
+                                    <template v-if="employeRoasterListing[employee.id]">
                                         <multiselect
-                                            v-model="employee.holiday"
+                                            v-model="employeRoasterListing[employee.id].holiday"
                                             :options="weekDaysOptions"
                                             :searchable="true"
                                             :close-on-select="true"
@@ -472,6 +477,7 @@
                                             label="label"
                                             track-by="value"
                                         />
+                                    </template>
                                     </td>
                                 </tr>
                             </tbody>
@@ -574,6 +580,7 @@ import { ref, computed } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import Multiselect from "vue-multiselect";
 import InputError from "../../Components/InputError.vue";
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     departments: Array,
@@ -599,13 +606,24 @@ const roster = useForm({
 });
 
 const selectedDepartment = ref(null);
+const employeRoasterListing = ref([]);
 
 const onDepartmentSelect = async (selectedDepartment) => {
     form.department_id = selectedDepartment.id;
 };
 
 const updateEmployeeSelection = async (val, employee) => {
-    employee.selected = val;
+    if(val == true){
+        employeRoasterListing.value[employee.id] = {
+            id: employee.id,
+            selected: val
+        };
+    }
+    else {
+        employeRoasterListing.value = employeRoasterListing.value.filter(
+            (emp) => emp.id !== employee.id
+        );
+    }
 };
 
 const selectedDesignation = ref(null);
@@ -626,8 +644,10 @@ const onShiftSelect = async (selectedShift) => {
     roster.shift_id = selectedShift.id;
 };
 const storeRoster = async () => {
-    props.employees.data.map((employee) => {
+    roster.employee = [];
+    employeRoasterListing.value.map((employee) => {
         if (employee?.selected) {
+            console.log(employee);
             roster.employee.push({
                 employee_id: employee?.id,
                 department_id: employee?.departmentId?.id || null,
@@ -636,7 +656,25 @@ const storeRoster = async () => {
             });
         }
     });
-    roster.post(route("employee-shift-roster.store"));
+    roster.post(route("employee-shift-roster.store"), {
+        onSuccess: () => {
+            // Reset the form after successful submission
+            Swal.fire({
+                title: 'Success!',
+                text: 'Employee Shift Roaster Updated successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            });
+            
+            form.reset();
+            roster.reset();
+            selectedDepartment.value = null;
+            selectedDesignation.value = null;
+            selectedGrade.value = null;
+            selectedShift.value = null;
+            employeRoasterListing.value = [];
+        },
+    });
 };
 
 const workingDays = ref(null);
